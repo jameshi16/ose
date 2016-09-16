@@ -1,8 +1,13 @@
-#include <iostream>
+#include "main.h"
 
-int main(int argc, char const *argv[])
+bool OSEMainApp::OnInit()
 {
-	std::cout << "Hello world!" << std::endl;
+	OSEMainUI *omu = new OSEMainUI("osu! Song Extractor", wxDefaultPosition, wxDefaultSize);
+	omu->Show(true);
+	return true;
+}
 
-	return 0;
+OSEMainUI::OSEMainUI(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(NULL, wxID_ANY, title, pos, size)
+{
+	//Insert cool code here
 }
