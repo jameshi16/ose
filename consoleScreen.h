@@ -8,6 +8,7 @@
 #define consoleScreenHEADER
 
 #include <wx/richtext/richtextctrl.h>
+#include <wx/textctrl.h>
 #include <wx/sizer.h>
 
 class consoleScreen : public wxFrame
@@ -19,13 +20,15 @@ public:
 	//Member UI elements represented in IDs (also, anonymous enum, so it can be accessed anywhere)
 	enum:long
 	{
-		ID_MainSizer,
-		ID_RichTextCtrl1
+		ID_MainSizer, //not needed
+		ID_RichTextCtrl1,
+		ID_TextCtrl1
 	};
 
 	//Member UI elements
-	wxFlexGridSizer *mainSizer;
-	wxRichTextCtrl *richTextCtrl1;
+	wxFlexGridSizer 	*mainSizer;
+	wxRichTextCtrl 		*richTextCtrl1;
+	wxTextCtrl 			*textCtrl1;
 
 protected:
 private:
