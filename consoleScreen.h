@@ -34,6 +34,9 @@ protected:
 private:
 	//necessary wxWidgets thing
 	wxDECLARE_EVENT_TABLE();
+
+	//Events
+	void CommandTextCtrlEnter(wxCommandEvent&);
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "consoleScreen.h"
 wxBEGIN_EVENT_TABLE(consoleScreen, wxFrame)
+	EVT_TEXT_ENTER(ID_TextCtrl1, consoleScreen::CommandTextCtrlEnter)
 wxEND_EVENT_TABLE()
 
 
@@ -27,4 +28,10 @@ consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPos
 consoleScreen::~consoleScreen()
 {
 	//trigger(massextinction);
+}
+
+void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)
+{
+	//Submit something
+	int x = 1; //put debugger here to check if code can reach here
 }
