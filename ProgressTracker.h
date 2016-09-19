@@ -5,24 +5,27 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
+#include <ostream>
 
 class ProgressTracker
 {
 public:
 	ProgressTracker(); //constructor
+	ProgressTracker(wxRichTextCtrl *w); //another possible constructor
 
-	friend std::istream& operator>>(std::istream &in, ProgressTracker& pt) //ADL detection
+	friend std::ostream& operator<<(std::ostream &os, ProgressTracker& pt) //ADL detection
 	{
 		if(pt.r_object != 0) //if an r_object exist
 			{
-				char *buffer = new char[1024]; //Won't know how many bytes there will be, so a random high number will do
+				--> fix this: std::ostringstream ss_stream; //defines string stream
 
-				in.get(buffer, 1024); //\0 automagically added!
+				ss_stream << os; //take from output stream
 
 				pt.r_object->Newline(); //adds a new line
-				pt.r_object->AppendText(buffer); //adds the text
+				pt.r_object->AppendText(ss_stream.str()); //adds the text
 			}
-			return in; //returns the istream
+			return os; //returns the istream
 	}
 
 	ProgressTracker& operator=(ProgressTracker pt)
@@ -39,6 +42,9 @@ public:
 		/*List of things to swap*/
 		swap(LHS.r_object, RHS.r_object);
 	}
+
+	void initialize(wxRichTextCtrl*); //initializeeeee
+	//void initialize(ProgressGuage*); soon, but not now.
 
 	virtual ~ProgressTracker(); //virtual destructor, in case I actually need to change this
 protected:
