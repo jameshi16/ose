@@ -6,13 +6,6 @@
 
 #include "ProgressTracker.h"
 
-/* Namespace that contains commands to test the program */
-namespace Commands
-{
-	typedef void (*commandFunction)();
-	const std::map<std::string, commandFunction> commandsAvailable = {}; //pretty cool, right?
-};
-
 class CommandHandler
 {
 public:
@@ -25,6 +18,13 @@ protected:
 private:
 	void operator=(CommandHandler&){} //do not implement
 	CommandHandler(CommandHandler&){} //do not implement
+};
+
+/* Namespace that contains commands to test the program */
+namespace Commands
+{
+	typedef void (*commandFunction)(ProgressTracker*);
+	std::map<std::string, commandFunction> commandsAvailable = {}; //pretty cool, right?
 };
 
 #endif
