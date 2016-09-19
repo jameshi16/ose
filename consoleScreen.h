@@ -10,6 +10,7 @@
 #include <wx/richtext/richtextctrl.h>
 #include <wx/textctrl.h>
 #include <wx/sizer.h>
+#include <wx/colour.h>
 
 class consoleScreen : public wxFrame
 {
