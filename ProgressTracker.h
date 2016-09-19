@@ -18,9 +18,9 @@ public:
 	{
 		if(pt.r_object != 0) //if an r_object exist
 			{
-				--> fix this: std::ostringstream ss_stream; //defines string stream
+				std::ostringstream ss_stream; //defines string stream
 
-				ss_stream << os; //take from output stream
+				ss_stream << os.rdbuf(); //take from output stream
 
 				pt.r_object->Newline(); //adds a new line
 				pt.r_object->AppendText(ss_stream.str()); //adds the text
