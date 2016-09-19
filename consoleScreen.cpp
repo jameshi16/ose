@@ -43,5 +43,4 @@ consoleScreen::~consoleScreen()
 void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)
 {
 	//Submit something
-	int x = 1; //put debugger here to check if code can reach here
 }
