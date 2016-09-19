@@ -1,6 +1,6 @@
 #include "ProgressTracker.h"
 
-ProgressTracker::ProgressTracker()
+ProgressTracker::ProgressTracker() : r_object(0)
 {
 	//constructor
 }
