@@ -14,7 +14,7 @@ public:
 	ProgressTracker(); //constructor
 	ProgressTracker(wxRichTextCtrl *w); //another possible constructor
 
-	friend std::ostream& operator<<(std::ostream &os, ProgressTracker& pt) //ADL detection
+	friend std::ostream& operator<<(ProgressTracker& pt, std::ostream &os) //ADL detection
 	{
 		if(pt.r_object != 0) //if an r_object exist
 			{
@@ -26,6 +26,15 @@ public:
 				pt.r_object->AppendText(ss_stream.str()); //adds the text
 			}
 			return os; //returns the istream
+	}
+
+	friend void operator<<(ProgressTracker& pt, const char *os) //ADL detection
+	{
+		if(pt.r_object != 0) //if an r_object exist
+			{
+				pt.r_object->Newline(); //adds a new line
+				pt.r_object->AppendText(os); //adds the text
+			}
 	}
 
 	ProgressTracker& operator=(ProgressTracker pt)
