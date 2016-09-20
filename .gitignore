@@ -31,3 +31,6 @@
 # Makefiles
 makefile
 
+# Sublime Workspace
+*.sublime-workspace
+
