@@ -61,9 +61,9 @@ private:
 /* Namespace that contains commands to test the program */
 namespace Commands
 {
-	void printAllCommands(ProgressTracker* pt);
+	void printAllCommands(ProgressTracker* pt, Arguments a);
 
-	typedef void (*commandFunction)(ProgressTracker*);
+	typedef void (*commandFunction)(ProgressTracker*, Arguments);
 	extern std::map<std::string, commandFunction> commandsAvailable;
 };
 

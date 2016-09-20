@@ -25,11 +25,15 @@ void CommandHandler::processCommand(std::string command, ProgressTracker *pt)
 	//Process Command.
 	using namespace Commands;
 
+	//First, split the command from the arguments.
+	Arguments a_arg(command.substr(command.find(" ", 0), command.length() - command.find(" ", 0)));
+	command = command.substr(0, command.find(" ", 0));
+
 	if (commandsAvailable.count(command) != 0 && commandsAvailable.count(command) == 1)
 	{
 		//launches the command
 		commandFunction cf = commandsAvailable[command]; //gets the command
-		cf(pt); //plays the command
+		cf(pt, a_arg); //plays the command
 		*pt << "";
 		return;
 	}
@@ -105,7 +109,7 @@ void Arguments::splitArguments()
 }
 
 /* Commands */
-void Commands::printAllCommands(ProgressTracker* pt)
+void Commands::printAllCommands(ProgressTracker* pt, Arguments a)
 {
 	for (std::map<std::string, commandFunction>::iterator it = commandsAvailable.begin(); it != commandsAvailable.end(); ++it)
 	{
