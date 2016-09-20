@@ -14,8 +14,6 @@ void ProgressTracker::initialize(wxRichTextCtrl* init)
 {
 	//Initialize!
 	r_object = init; //makes r_object initialized.
-	init->Newline(); //add new line
-	init->AppendText("ProgressTracker initialized for this instance."); //adds some weird matrix-like text
 }
 
 ProgressTracker::~ProgressTracker()

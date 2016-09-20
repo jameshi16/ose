@@ -18,7 +18,7 @@ consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPos
 	//(* Initialize objects
 	mainSizer 		= new wxFlexGridSizer(2, 1, 0, 0); //rows, cols, vgap, hgap
 	richTextCtrl1 	= new wxRichTextCtrl(this, ID_RichTextCtrl1, "This textbox is currently blank");
-	textCtrl1 		= new wxTextCtrl(this, ID_TextCtrl1, "Type your command");
+	textCtrl1 		= new wxTextCtrl(this, ID_TextCtrl1, "");
 	//*)
 
 	//(* Main Sizer configuration
@@ -32,8 +32,10 @@ consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPos
 
 	//（*Configure appearance of controls
 	richTextCtrl1->SetBackgroundColour(*wxBLACK);
-	richTextCtrl1->BeginTextColour(*wxWHITE);
 	richTextCtrl1->Disable();
+	richTextCtrl1->BeginTextColour(*wxWHITE);
+	richTextCtrl1->WriteText("Copyright (c) JamesLab Softwares 2016");
+	richTextCtrl1->Newline();
 
 	textCtrl1->SetHelpText("Command goes here");
 	//*)
@@ -48,6 +50,8 @@ consoleScreen::~consoleScreen()
 void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)
 {
 	//Makes use of commandHandler
-	CommandHandler(textCtrl1->GetValue().ToStdString(), (new ProgressTracker(richTextCtrl1))); //sends command to commandHandler
+	ProgressTracker *pt = new ProgressTracker(richTextCtrl1);
+	CommandHandler(textCtrl1->GetValue().ToStdString(), pt); //sends command to commandHandler
 	textCtrl1->Clear(); //clears the text box
+	delete pt; //deletes the pointer
 }

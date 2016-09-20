@@ -23,7 +23,7 @@ public:
 				ss_stream << os.rdbuf(); //take from output stream
 
 				pt.r_object->Newline(); //adds a new line
-				pt.r_object->AppendText(ss_stream.str()); //adds the text
+				pt.r_object->WriteText(ss_stream.str()); //adds the text
 			}
 			return os; //returns the istream
 	}
@@ -32,8 +32,10 @@ public:
 	{
 		if(pt.r_object != 0) //if an r_object exist
 			{
-				pt.r_object->Newline(); //adds a new line
-				pt.r_object->AppendText(os); //adds the text
+				if (os != "")
+					pt.r_object->Newline(); //adds a new line
+
+				pt.r_object->WriteText(os); //adds the text
 			}
 	}
 
