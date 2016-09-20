@@ -40,6 +40,9 @@ consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPos
 	textCtrl1->SetHelpText("Command goes here");
 	//*)
 	SetSizer(mainSizer); //sets the sizer
+
+	//Connects (only used when MACROS doesn't let me define an id ;-;)
+	textCtrl1->Bind(wxEVT_KEY_DOWN, &consoleScreen::CommandTextCtrlKeyDown, this);
 }
 
 consoleScreen::~consoleScreen()
@@ -54,4 +57,24 @@ void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)
 	CommandHandler(textCtrl1->GetValue().ToStdString(), pt); //sends command to commandHandler
 	textCtrl1->Clear(); //clears the text box
 	delete pt; //deletes the pointer
+}
+
+void consoleScreen::CommandTextCtrlKeyDown(wxKeyEvent& event)
+{
+	//Return the event first
+	event.Skip(); //"skip"
+
+	//Detects if CTRL is held
+	if (event.GetModifiers() == wxMOD_CONTROL)
+	{
+		switch(event.GetKeyCode())
+		{
+			case 'A':
+				textCtrl1->SetSelection(-1, -1); //select all text!
+			break;
+
+			default:
+			break;
+		}
+	}
 }
