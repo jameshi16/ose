@@ -23,8 +23,14 @@ private:
 /* Namespace that contains commands to test the program */
 namespace Commands
 {
+	void exampleCommand(ProgressTracker* pt);
+
 	typedef void (*commandFunction)(ProgressTracker*);
-	std::map<std::string, commandFunction> commandsAvailable = {}; //pretty cool, right?
+	std::map<std::string, commandFunction> commandsAvailable = 
+	{ /*List of commands here*/
+		std::pair<std::string, commandFunction>("exampleCommand", exampleCommand)
+	}; //pretty cool, right?
+
 };
 
 #endif

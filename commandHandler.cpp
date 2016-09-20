@@ -41,3 +41,8 @@ CommandHandler::~CommandHandler()
 {
 	//dtor
 }
+
+void Commands::exampleCommand(ProgressTracker* pt)
+{
+	*pt << "Example!"; //returns something
+}
