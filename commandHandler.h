@@ -23,7 +23,6 @@ private:
 /* Namespace that contains commands to test the program */
 namespace Commands
 {
-	void exampleCommand(ProgressTracker* pt);
 	void printAllCommands(ProgressTracker* pt);
 
 	typedef void (*commandFunction)(ProgressTracker*);

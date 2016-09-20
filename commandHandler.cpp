@@ -4,8 +4,6 @@ namespace Commands
 {
 	std::map<std::string, commandFunction> commandsAvailable = 
 	{ /*List of commands here*/
-		std::pair<std::string, commandFunction>("exampleCommand", exampleCommand),
-		std::pair<std::string, commandFunction>("printAllCommands", printAllCommands),
 		std::pair<std::string, commandFunction>("lc", printAllCommands) //alias to entry #2
 	}; //pretty cool, right?
 }
@@ -37,7 +35,7 @@ void CommandHandler::processCommand(std::string command, ProgressTracker *pt)
 	{
 		//report to progress tracker
 		*pt << "Error processing command: Command not found";
-		*pt << "Try using printAllCommands or lc";
+		*pt << "Try using lc";
 		*pt << "";
 		return;
 	}
@@ -55,11 +53,6 @@ void CommandHandler::processCommand(std::string command, ProgressTracker *pt)
 CommandHandler::~CommandHandler()
 {
 	//dtor
-}
-
-void Commands::exampleCommand(ProgressTracker* pt)
-{
-	*pt << "Example!"; //returns something
 }
 
 void Commands::printAllCommands(ProgressTracker* pt)
