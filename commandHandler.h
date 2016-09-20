@@ -26,11 +26,7 @@ namespace Commands
 	void exampleCommand(ProgressTracker* pt);
 
 	typedef void (*commandFunction)(ProgressTracker*);
-	std::map<std::string, commandFunction> commandsAvailable = 
-	{ /*List of commands here*/
-		std::pair<std::string, commandFunction>("exampleCommand", exampleCommand)
-	}; //pretty cool, right?
-
+	extern std::map<std::string, commandFunction> commandsAvailable; 
 };
 
 #endif

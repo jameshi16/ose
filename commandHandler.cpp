@@ -1,5 +1,13 @@
 #include "commandHandler.h"
 
+namespace Commands
+{
+	std::map<std::string, commandFunction> commandsAvailable = 
+	{ /*List of commands here*/
+		std::pair<std::string, commandFunction>("exampleCommand", exampleCommand)
+	}; //pretty cool, right?
+}
+
 CommandHandler::CommandHandler()
 {
 	//ctor

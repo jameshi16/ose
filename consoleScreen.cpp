@@ -1,4 +1,9 @@
 #include "consoleScreen.h"
+
+//Self-declared headers
+#include "commandHandler.h"
+#include "ProgressTracker.h"
+
 wxBEGIN_EVENT_TABLE(consoleScreen, wxFrame)
 	EVT_TEXT_ENTER(ID_TextCtrl1, consoleScreen::CommandTextCtrlEnter)
 wxEND_EVENT_TABLE()
@@ -42,5 +47,7 @@ consoleScreen::~consoleScreen()
 
 void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)
 {
-	//Submit something
+	//Makes use of commandHandler
+	CommandHandler(textCtrl1->GetValue().ToStdString(), (new ProgressTracker(richTextCtrl1))); //sends command to commandHandler
+	textCtrl1->Clear(); //clears the text box
 }
