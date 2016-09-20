@@ -24,9 +24,10 @@ private:
 namespace Commands
 {
 	void exampleCommand(ProgressTracker* pt);
+	void printAllCommands(ProgressTracker* pt);
 
 	typedef void (*commandFunction)(ProgressTracker*);
-	extern std::map<std::string, commandFunction> commandsAvailable; 
+	extern std::map<std::string, commandFunction> commandsAvailable;
 };
 
 #endif
