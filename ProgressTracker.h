@@ -39,6 +39,17 @@ public:
 			}
 	}
 
+	friend void operator<<(ProgressTracker& pt, std::string os) //ADL detection, again.
+	{
+		if (pt.r_object != 0) //if an r_object exist
+		{
+			if (os != "")
+				pt.r_object->Newline(); //adds a new line
+
+			pt.r_object->WriteText(os);
+		}
+	}
+
 	ProgressTracker& operator=(ProgressTracker pt)
 	{
 		//Already kind of using a copy of ProgressTracker
