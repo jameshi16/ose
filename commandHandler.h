@@ -28,8 +28,18 @@ public:
 	Arguments(std::string);
 	~Arguments();
 
-	Arguments(Arguments &a)
-	{*this = a;} //super fast constructor
+	Arguments(Arguments& a)
+	{
+		//Implement copy constructor
+		this->s_fullArgument 	= a.s_fullArgument;
+		this->v_Arguments 		= a.v_Arguments;
+	}
+
+	Arguments(Arguments&& a) : Arguments() //I don't understand the full details, but I know this can detect rvalues (those values where there is no deeper meaning in the argument passed)
+	{
+		//Implement move constructor
+		std::swap(*this, a); //done
+	}
 
 	Arguments& operator=(Arguments RHS)
 	{
@@ -50,18 +60,22 @@ public:
 	std::string getArgument(int);
 	void setArgument(int, std::string);
 
+	int size();
+
 protected:
 private:
 	std::string s_fullArgument 				= "";
 	std::vector<std::string> v_Arguments 	= {};
 
 	void splitArguments();
+	std::string removeAllSpaces(std::string);
 };
 
 /* Namespace that contains commands to test the program */
 namespace Commands
 {
 	void printAllCommands(ProgressTracker* pt, Arguments a);
+	void printArguments(ProgressTracker* pt, Arguments a);
 
 	typedef void (*commandFunction)(ProgressTracker*, Arguments);
 	extern std::map<std::string, commandFunction> commandsAvailable;

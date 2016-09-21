@@ -5,7 +5,8 @@ namespace Commands
 {
 	std::map<std::string, commandFunction> commandsAvailable = 
 	{ /*List of commands here*/
-		std::pair<std::string, commandFunction>("lc", printAllCommands) //alias to entry #2
+		std::pair<std::string, commandFunction>("lc", printAllCommands), //print all commands
+		std::pair<std::string, commandFunction>("printArgs", printArguments) //print all arguments
 	}; //pretty cool, right?
 }
 
@@ -25,9 +26,14 @@ void CommandHandler::processCommand(std::string command, ProgressTracker *pt)
 	//Process Command.
 	using namespace Commands;
 
+	Arguments a_arg; //declare argument
+
 	//First, split the command from the arguments.
-	Arguments a_arg(command.substr(command.find(" ", 0), command.length() - command.find(" ", 0)));
-	command = command.substr(0, command.find(" ", 0));
+	if (command.find(" ", 0) != std::string::npos) //nested if
+	{
+		a_arg.setFullArgument(command.substr(command.find(" ", 0) + 1, command.length() - command.find(" ", 0)));
+		command = command.substr(0, command.find(" ", 0));
+	}
 
 	if (commandsAvailable.count(command) != 0 && commandsAvailable.count(command) == 1)
 	{
@@ -101,18 +107,54 @@ void Arguments::splitArguments()
 	int n_lastPosition = 0; //sets last position
 	while (buffer.find(" ", n_lastPosition) != std::string::npos) //this is the while loop
 	{
-		v_Arguments.push_back(buffer.substr(n_lastPosition, buffer.find(" ", n_lastPosition) - n_lastPosition)); //pushes back this anonymous string
-		n_lastPosition = buffer.find(" ", n_lastPosition); //sets n_lastPosition to the latest position
+		v_Arguments.push_back(removeAllSpaces(buffer.substr(n_lastPosition, buffer.find(" ", n_lastPosition) - n_lastPosition))); //pushes back this anonymous string
+		n_lastPosition = buffer.find(" ", n_lastPosition + 1); //sets n_lastPosition to the latest position
+	}
+	//This is for the last argument.
+	std::string lastArgumentBuffer = "";
+	(buffer.find(" ", n_lastPosition) != std::string::npos) ? (lastArgumentBuffer = buffer.substr(buffer.find(" ", n_lastPosition), buffer.length() - buffer.find(" ", n_lastPosition))) : (lastArgumentBuffer = buffer);
+	if (removeAllSpaces(lastArgumentBuffer) != "")
+	{
+		v_Arguments.push_back(removeAllSpaces(lastArgumentBuffer));
 	}
 
 	//Done.
 }
 
+std::string Arguments::removeAllSpaces(std::string s)
+{
+	//kill all spaces
+	int n_lastPosition = 0;
+	while (s.find(" ", n_lastPosition) != std::string::npos)
+	{
+		s.erase(s.find(" ", n_lastPosition), 1);
+		n_lastPosition = s.find(" ", n_lastPosition + 1);
+	}
+
+	return s;
+}
+
+int Arguments::size()
+{ return v_Arguments.size(); }
+
 /* Commands */
-void Commands::printAllCommands(ProgressTracker* pt, Arguments a)
+void Commands::printAllCommands(ProgressTracker* pt, Arguments)
 {
 	for (std::map<std::string, commandFunction>::iterator it = commandsAvailable.begin(); it != commandsAvailable.end(); ++it)
 	{
 		*pt << it->first.c_str(); //prints the commands
+	}
+}
+
+void Commands::printArguments(ProgressTracker* pt, Arguments a)
+{
+	if (a.size() != 0)
+	{
+		for (int iii = 0; iii < a.size(); ++iii)
+		{
+			*pt << std::string("Argument: ") + a.getArgument(iii);
+		}
+
+		*pt << std::string("Full argument passed: ") + a.getFullArgument();	
 	}
 }
