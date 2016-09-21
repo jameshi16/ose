@@ -107,12 +107,21 @@ void Arguments::splitArguments()
 	int n_lastPosition = 0; //sets last position
 	while (buffer.find(" ", n_lastPosition) != std::string::npos) //this is the while loop
 	{
-		v_Arguments.push_back(removeAllSpaces(buffer.substr(n_lastPosition, buffer.find(" ", n_lastPosition) - n_lastPosition))); //pushes back this anonymous string
-		n_lastPosition = buffer.find(" ", n_lastPosition + 1); //sets n_lastPosition to the latest position
+		if (buffer[n_lastPosition + 1] != ' ')
+		{
+			v_Arguments.push_back(removeAllSpaces(buffer.substr(n_lastPosition, buffer.find(" ", n_lastPosition) - n_lastPosition))); //pushes back this anonymous string
+			n_lastPosition = buffer.find(" ", n_lastPosition) + 1; //sets n_lastPosition to the latest position
+		}
+		else
+		{
+			buffer.erase(n_lastPosition + 1, 1); //erases the blank and tries to find more arguments
+		}
 	}
 	//This is for the last argument.
 	std::string lastArgumentBuffer = "";
-	(buffer.find(" ", n_lastPosition) != std::string::npos) ? (lastArgumentBuffer = buffer.substr(buffer.find(" ", n_lastPosition), buffer.length() - buffer.find(" ", n_lastPosition))) : (lastArgumentBuffer = buffer);
+	n_lastPosition = buffer.find(" ", 0); //reuse used integer
+	
+	(buffer.find(" ", 0) != std::string::npos) ? (lastArgumentBuffer = buffer.substr(buffer.find(" ", n_lastPosition) + 1, buffer.length() - buffer.find(" ", n_lastPosition))) : (lastArgumentBuffer = buffer);
 	if (removeAllSpaces(lastArgumentBuffer) != "")
 	{
 		v_Arguments.push_back(removeAllSpaces(lastArgumentBuffer));
@@ -150,7 +159,7 @@ void Commands::printArguments(ProgressTracker* pt, Arguments a)
 {
 	if (a.size() != 0)
 	{
-		for (int iii = 0; iii < a.size(); ++iii)
+		for (int iii = 0; iii < a.size(); iii++)
 		{
 			*pt << std::string("Argument: ") + a.getArgument(iii);
 		}
