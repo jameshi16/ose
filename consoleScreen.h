@@ -7,6 +7,9 @@
 #ifndef consoleScreenHEADER
 #define consoleScreenHEADER
 
+#include <vector>
+#include <string>
+
 #include <wx/richtext/richtextctrl.h>
 #include <wx/textctrl.h>
 #include <wx/sizer.h>
@@ -40,6 +43,10 @@ private:
 	void CommandTextCtrlEnter(wxCommandEvent&);
 	void CommandTextCtrlKeyDown(wxKeyEvent&);
 	void outputTextCtrlTextChange(wxCommandEvent&);
+
+	//Variable
+	std::vector<std::string> lastLines = {};
+	int n_howManyTimesUpHasBeenPressed = 0;
 };
 
 #endif

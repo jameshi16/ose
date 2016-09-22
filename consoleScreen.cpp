@@ -58,7 +58,9 @@ void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)
 	//Makes use of commandHandler
 	ProgressTracker *pt = new ProgressTracker(richTextCtrl1);
 	CommandHandler(textCtrl1->GetValue().ToStdString(), pt); //sends command to commandHandler
+	lastLines.push_back(textCtrl1->GetValue().ToStdString()); //pushes back the line
 	textCtrl1->Clear(); //clears the text box
+	n_howManyTimesUpHasBeenPressed = 0; //sets the "last command" thingy back to 0
 	delete pt; //deletes the pointer
 }
 
@@ -77,13 +79,44 @@ void consoleScreen::CommandTextCtrlKeyDown(wxKeyEvent& event)
 			break;
 
 			default:
+				n_howManyTimesUpHasBeenPressed = 0;
 			break;
+		}
+	}
+
+	//Detects if no mods are held
+	if (!event.HasAnyModifiers())
+	{
+		if (lastLines.size() != 0)
+		{
+			switch(event.GetKeyCode())
+			{
+				case WXK_UP:
+					if (static_cast<unsigned int>(n_howManyTimesUpHasBeenPressed) > (lastLines.size() - 1))
+						break;
+
+					textCtrl1->SetValue(lastLines[lastLines.size() - 1 - n_howManyTimesUpHasBeenPressed]);
+					n_howManyTimesUpHasBeenPressed++;
+					break;
+
+				case WXK_DOWN:
+					if (n_howManyTimesUpHasBeenPressed == 0)
+						break;
+
+					n_howManyTimesUpHasBeenPressed--;
+					textCtrl1->SetValue(lastLines[lastLines.size() - 1 - n_howManyTimesUpHasBeenPressed]);
+					break;
+
+				default:
+					break;
+			}
 		}
 	}
 }
 
 void consoleScreen::outputTextCtrlTextChange(wxCommandEvent& event)
 {
+	event.Skip(); //pass the event to wxWidgets
 	//Scroll all the way to the bottom EVERYTIME text changes.
 	richTextCtrl1->ShowPosition(richTextCtrl1->GetLastPosition());
 }
