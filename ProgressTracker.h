@@ -32,7 +32,7 @@ public:
 	{
 		if(pt.r_object != 0) //if an r_object exist
 			{
-				if (os != "")
+				if (os != '\0')
 					pt.r_object->Newline(); //adds a new line
 
 				pt.r_object->WriteText(os); //adds the text
@@ -43,7 +43,7 @@ public:
 	{
 		if (pt.r_object != 0) //if an r_object exist
 		{
-			if (os != "")
+			if (os != '\0')
 				pt.r_object->Newline(); //adds a new line
 
 			pt.r_object->WriteText(os);
