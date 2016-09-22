@@ -6,7 +6,7 @@ namespace Commands
 	std::map<std::string, commandFunction> commandsAvailable = 
 	{ /*List of commands here*/
 		std::pair<std::string, commandFunction>("lc", printAllCommands), //print all commands
-		std::pair<std::string, commandFunction>("printArgs", printArguments) //print all arguments
+		std::pair<std::string, commandFunction>("print", print) //print all arguments
 	}; //pretty cool, right?
 }
 
@@ -166,7 +166,7 @@ void Commands::printAllCommands(ProgressTracker* pt, Arguments)
 	}
 }
 
-void Commands::printArguments(ProgressTracker* pt, Arguments a)
+void Commands::print(ProgressTracker* pt, Arguments a)
 {
 	if (a.size() != 0)
 	{

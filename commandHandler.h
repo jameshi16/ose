@@ -75,7 +75,7 @@ private:
 namespace Commands
 {
 	void printAllCommands(ProgressTracker* pt, Arguments a);
-	void printArguments(ProgressTracker* pt, Arguments a);
+	void print(ProgressTracker* pt, Arguments a);
 
 	typedef void (*commandFunction)(ProgressTracker*, Arguments);
 	extern std::map<std::string, commandFunction> commandsAvailable;
