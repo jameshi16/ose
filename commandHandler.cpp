@@ -119,9 +119,19 @@ void Arguments::splitArguments()
 	}
 	//This is for the last argument.
 	std::string lastArgumentBuffer = "";
-	n_lastPosition = buffer.find(" ", 0); //reuse used integer
+	n_lastPosition = 0;
 	
-	(buffer.find(" ", 0) != std::string::npos) ? (lastArgumentBuffer = buffer.substr(buffer.find(" ", n_lastPosition) + 1, buffer.length() - buffer.find(" ", n_lastPosition))) : (lastArgumentBuffer = buffer);
+	if (buffer.find(" "), 0 != std::string::npos)
+	{
+		//If it does find " "
+		lastArgumentBuffer = buffer.substr(buffer.find_last_of(" ") + 1, buffer.length() - buffer.find_last_of(" ")); //the last space represents the last argument
+	}
+	else
+	{
+		//If it doesn't find " "
+		lastArgumentBuffer = buffer; //the whole thing is the last argument
+	}
+
 	if (removeAllSpaces(lastArgumentBuffer) != "")
 	{
 		v_Arguments.push_back(removeAllSpaces(lastArgumentBuffer));
