@@ -39,6 +39,7 @@ private:
 	//Events
 	void CommandTextCtrlEnter(wxCommandEvent&);
 	void CommandTextCtrlKeyDown(wxKeyEvent&);
+	void outputTextCtrlTextChange(wxCommandEvent&);
 };
 
 #endif

@@ -6,6 +6,7 @@
 
 wxBEGIN_EVENT_TABLE(consoleScreen, wxFrame)
 	EVT_TEXT_ENTER(ID_TextCtrl1, consoleScreen::CommandTextCtrlEnter)
+	EVT_TEXT(ID_RichTextCtrl1, consoleScreen::outputTextCtrlTextChange)
 wxEND_EVENT_TABLE()
 
 
@@ -17,7 +18,7 @@ consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPos
 
 	//(* Initialize objects
 	mainSizer 		= new wxFlexGridSizer(2, 1, 0, 0); //rows, cols, vgap, hgap
-	richTextCtrl1 	= new wxRichTextCtrl(this, ID_RichTextCtrl1, "This textbox is currently blank");
+	richTextCtrl1 	= new wxRichTextCtrl(this, ID_RichTextCtrl1, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxRE_READONLY); //sets the richtext as readonly
 	textCtrl1 		= new wxTextCtrl(this, ID_TextCtrl1, "");
 	//*)
 
@@ -32,7 +33,6 @@ consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPos
 
 	//（*Configure appearance of controls
 	richTextCtrl1->SetBackgroundColour(*wxBLACK);
-	richTextCtrl1->Disable();
 	richTextCtrl1->BeginTextColour(*wxWHITE);
 	richTextCtrl1->WriteText("Copyright (c) JamesLab Softwares 2016");
 	richTextCtrl1->Newline();
@@ -43,6 +43,9 @@ consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPos
 
 	//Connects (only used when MACROS doesn't let me define an id ;-;)
 	textCtrl1->Bind(wxEVT_KEY_DOWN, &consoleScreen::CommandTextCtrlKeyDown, this);
+
+	//Focus
+	textCtrl1->SetFocus(); //sets textctrl1 as focusable
 }
 
 consoleScreen::~consoleScreen()
@@ -77,4 +80,10 @@ void consoleScreen::CommandTextCtrlKeyDown(wxKeyEvent& event)
 			break;
 		}
 	}
+}
+
+void consoleScreen::outputTextCtrlTextChange(wxCommandEvent& event)
+{
+	//Scroll all the way to the bottom EVERYTIME text changes.
+	richTextCtrl1->ShowPosition(richTextCtrl1->GetLastPosition());
 }
