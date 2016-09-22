@@ -159,6 +159,7 @@ int Arguments::size()
 /* Commands */
 void Commands::printAllCommands(ProgressTracker* pt, Arguments)
 {
+	*pt << "List of commands:";
 	for (std::map<std::string, commandFunction>::iterator it = commandsAvailable.begin(); it != commandsAvailable.end(); ++it)
 	{
 		*pt << it->first.c_str(); //prints the commands
