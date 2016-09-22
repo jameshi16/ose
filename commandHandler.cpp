@@ -107,7 +107,7 @@ void Arguments::splitArguments()
 	int n_lastPosition = 0; //sets last position
 	while (buffer.find(" ", n_lastPosition) != std::string::npos) //this is the while loop
 	{
-		if (buffer[n_lastPosition + 1] != ' ')
+		if (buffer[buffer.find(" ", n_lastPosition) - 1] != ' ' || buffer[buffer.find(" ", n_lastPosition) - 1] != '\0') //if the character next to found "space" is blank, or if the argument found before "space" is blank
 		{
 			v_Arguments.push_back(removeAllSpaces(buffer.substr(n_lastPosition, buffer.find(" ", n_lastPosition) - n_lastPosition))); //pushes back this anonymous string
 			n_lastPosition = buffer.find(" ", n_lastPosition) + 1; //sets n_lastPosition to the latest position
