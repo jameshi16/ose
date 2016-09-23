@@ -44,6 +44,10 @@ namespace osuBeatmapFunctions
 {
 	bool isMusicMp3(string); //surface check if music is mp3
 	bool isMusicMp3(osuBeatmap); //can also use osuBeatmap to check
+
+	bool isImagePng(string); //surface check if picture is .png
+	bool isImagePng(osuBeatmap); //can also use osuBeatmap to check
+
 	void fixBeatmapDuplicates(vector<osuBeatmap>&); //fix beatmap duplicates
 };
 
