@@ -10,12 +10,32 @@ class ImageFile : public TagLib::File
 public:
 	ImageFile(const char *file) : TagLib::File(file) //initializes the class using a class intializer
 	{
+		//do nothing
+	}
 
+	ImageFile(TagLib::IOStream* stream) : TagLib::File(stream) //Initialize image from stream
+	{
+		//do nothing
 	}
 
 	TagLib::ByteVector data()
 	{
 		return readBlock(length()); //reads and returns the data
+	}
+
+	bool save()
+	{
+		return false;
+	}
+
+	TagLib::Tag *tag() const
+	{
+		return 0;
+	}
+
+	TagLib::AudioProperties *audioProperties() const
+	{
+		return 0;
 	}
 };
 

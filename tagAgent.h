@@ -2,6 +2,7 @@
 #define TAG_HEADER
 
 #include "osuBeatmap.h"
+#include "ImageManager/ImageManager.h"
 
 //le tagging library
 #include <tag.h>

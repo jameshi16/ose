@@ -20,7 +20,7 @@ void TagAgent::autoTag(osuBeatmap& ob)
 			if (isImagePng(ob))
 			{
 				frame->setMimeType("image/png"); //sets cover art as png file type
-				//frame->setPicture(); //to implement
+				frame->setPicture(ImageFile(&ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto))).data()); //to implement
 
 				t->addFrame(frame); //adds frame.
 			}
