@@ -33,4 +33,5 @@ makefile
 
 # Sublime Workspace
 *.sublime-workspace
+*.sublime-project
 
