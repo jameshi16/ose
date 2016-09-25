@@ -1,5 +1,5 @@
-#ifndef TAG_HEADER
-#define TAG_HEADER
+#ifndef TAGAGENT_HEADER
+#define TAGAGENT_HEADER
 
 #include "osuBeatmap.h"
 #include "ImageManager/ImageManager.h"
@@ -13,8 +13,14 @@
 class TagAgent
 {
 public:
-	TagAgent();
-	~TagAgent();
+	TagAgent()
+	{
+
+	}
+	~TagAgent()
+	{
+		
+	}
 
 	//Copy constructor
 	TagAgent(TagAgent& t)
@@ -32,6 +38,7 @@ public:
 	TagAgent& operator=(TagAgent RHS)
 	{
 		swap(*this, RHS); //swaps
+		return *this;
 	}
 
 	friend void swap(TagAgent& LHS, TagAgent& RHS)

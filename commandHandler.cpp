@@ -1,12 +1,15 @@
 #include "commandHandler.h"
 
+#include <boost/filesystem.hpp>
+
 /* Needed to make the whole file work (Declaration of Commands) */
 namespace Commands
 {
 	std::map<std::string, commandFunction> commandsAvailable = 
 	{ /*List of commands here*/
 		std::pair<std::string, commandFunction>("lc", printAllCommands), //print all commands
-		std::pair<std::string, commandFunction>("print", print) //print all arguments
+		std::pair<std::string, commandFunction>("print", print), //print all arguments
+		std::pair<std::string, commandFunction>("TestTag", testTaggingOnFile)
 	}; //pretty cool, right?
 }
 
@@ -176,5 +179,32 @@ void Commands::print(ProgressTracker* pt, Arguments a)
 		}
 
 		*pt << std::string("Full argument passed: ") + a.getFullArgument();	
+	}
+}
+
+void Commands::testTaggingOnFile(ProgressTracker* pt, Arguments a)
+{
+	if (a.size() == 0)
+	{
+		*pt << "Usage: testTag <full path to music> <full path to picture>";
+	}
+
+	std::vector<std::string> Files = {}; //the object to contain the file directory
+
+	for (int iii = 0; iii < a.size(); iii++)
+	{
+		if (boost::filesystem::exists(a[iii]))
+		{
+			Files.push_back(a[iii]);
+		}
+		if (Files.size() == 2) {break;}
+	}
+
+	if (!Files.size())
+	{
+		osuBeatmap os{"TestTag", Files[0], Files[1]}; //make new os
+		TagAgent().autoTag(os); //autotags os.
+
+		*pt << "Sucessfully tagged";
 	}
 }

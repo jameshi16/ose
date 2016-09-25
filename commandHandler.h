@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 
+//My own includes
+#include "tagAgent.h"
 #include "ProgressTracker.h"
 
 class CommandHandler
@@ -47,6 +49,11 @@ public:
 		return *this;
 	}
 
+	std::string& operator[](unsigned int iii)
+	{
+		return v_Arguments[iii];
+	}
+
 	friend void swap(Arguments& LHS, Arguments& RHS)
 	{
 		using std::swap; //ADL
@@ -76,6 +83,7 @@ namespace Commands
 {
 	void printAllCommands(ProgressTracker* pt, Arguments a);
 	void print(ProgressTracker* pt, Arguments a);
+	void testTaggingOnFile(ProgressTracker* pt, Arguments a);
 
 	typedef void (*commandFunction)(ProgressTracker*, Arguments);
 	extern std::map<std::string, commandFunction> commandsAvailable;
