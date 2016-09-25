@@ -5,6 +5,9 @@ void TagAgent::autoTag(osuBeatmap& ob)
 	TagLib::MPEG::File audioFile(ob.MusicLocation.c_str()); //the audio file
 	TagLib::ID3v2::Tag *t = audioFile.ID3v2Tag(true); //initializes a tag object, with the audiofile, turning on IDv2Tag at the same time
 
+	//Telling TagLib we don't need ID3v1Tag
+	audioFile.ID3v1Tag(false);
+
 	/*Begin self-promoting block*/
 	t->setTitle(ob.BeatmapName); //sets the title
 	t->setArtist("JamesLab Softwares"); //sets the artist
@@ -21,12 +24,11 @@ void TagAgent::autoTag(osuBeatmap& ob)
 			{
 				frame->setMimeType("image/png"); //sets cover art as png file type
 				frame->setPicture(ImageFile(&ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto))).data()); //to implement
-
 				t->addFrame(frame); //adds frame.
 			}
 		}
 	}
 
-	//Ultimately, save the file.
-	audioFile.save();
+	//Ultimately, save the file (Windows doesn't like ID3v2.4 AT ALL. Instead, I'll use ID3v2.3, so that windows can see the cover art.)
+	audioFile.save(TagLib::MPEG::File::TagTypes::AllTags, false, 3);
 }

@@ -9,7 +9,7 @@ namespace Commands
 	{ /*List of commands here*/
 		std::pair<std::string, commandFunction>("lc", printAllCommands), //print all commands
 		std::pair<std::string, commandFunction>("print", print), //print all arguments
-		std::pair<std::string, commandFunction>("TestTag", testTaggingOnFile)
+		std::pair<std::string, commandFunction>("testTag", testTaggingOnFile)
 	}; //pretty cool, right?
 }
 
@@ -200,9 +200,9 @@ void Commands::testTaggingOnFile(ProgressTracker* pt, Arguments a)
 		if (Files.size() == 2) {break;}
 	}
 
-	if (!Files.size())
+	if (Files.size())
 	{
-		osuBeatmap os{"TestTag", Files[0], Files[1]}; //make new os
+		osuBeatmap os{"TestTag", Files[1], Files[0]}; //make new os
 		TagAgent().autoTag(os); //autotags os.
 
 		*pt << "Sucessfully tagged";

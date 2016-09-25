@@ -18,7 +18,8 @@ wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 		thePoint.y = (theImage.GetSize().GetHeight() /2) - 300; //the center - 600
 		//The point is now fully initialized.
 
-		theImage.Resize(wxSize(600, 600), thePoint); //crops the image.
+		theImage = theImage.GetSubImage(wxRect(thePoint, wxSize(600, 600))); //crops the image.
+		return theImage;
 	}
 	if (theImage.GetSize().GetWidth() >= 300 || theImage.GetSize().GetHeight() >= 300) //if it is more than 300, less than 600
 	{
@@ -27,7 +28,8 @@ wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 		thePoint.y = (theImage.GetSize().GetHeight() /2) - 150; //the center - 600
 		//The point is now fully initialized.
 
-		theImage.Resize(wxSize(300, 300), thePoint); //crops the image.
+		theImage = theImage.GetSubImage(wxRect(thePoint, wxSize(600, 600))); //crops the image.
+		return theImage;
 	}
 	//Everything else will be ignored because...
 	//why not?
@@ -44,11 +46,13 @@ TagLib::ByteVectorStream& ImageManipulation::asIOStream(wxImage theImage)
 
 	/*Reads the stream into a character array*/
 	char *buffer = new char[theOutStream.GetSize() + 1]; //new character array
-	theOutStream.Write(buffer, theOutStream.GetSize()); //writes to the buffer
+	theOutStream.CopyTo(buffer, theOutStream.GetSize()); //writes to the buffer
 
 	buffer[theOutStream.GetSize()] = '\0'; //null end it.
 
 	/*Write Buffer into ByteVectorStream through ByteVector*/
-	return *(new TagLib::ByteVectorStream(TagLib::ByteVector(buffer, theOutStream.GetSize()))); //returns the ByteVectorStream
+	TagLib::ByteVectorStream &bvs = *(new TagLib::ByteVectorStream(TagLib::ByteVector(buffer, theOutStream.GetSize()))); //returns the ByteVectorStream
+	delete[] buffer;
+	return bvs; //returns the ByteVectorStream
 
 }
