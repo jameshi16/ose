@@ -21,6 +21,15 @@ namespace fileOperations
 	/*File reading sorcery (non-osu specific)*/
 	void readFile(std::string file, readingFunction, ProgressTracker *pt = 0); //reads the file using provided function (wrapper kinda function)
 	void readFiles(std::vector<std::string> files, readingFunction, ProgressTracker *pt = 0); //reads all the files using provided function
+
+	/*String reducing sorcery*/
+	std::string rootDirectoryOfFile(std::string);
+};
+
+namespace osuFileOperations
+{
+	/*File reading function*/
+	void readSingleFile(std::vector<osuBeatmap> *array, std::string file, ProgressTracker *pt = 0); //used for readFile
 };
 
 #endif //File Manager.

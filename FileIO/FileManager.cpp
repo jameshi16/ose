@@ -1,5 +1,8 @@
 #include "FileManager.h"
 
+//Standard includes
+#include "fstream"
+
 //Boost includes
 #include <boost/filesystem.hpp>
 
@@ -66,4 +69,47 @@ void fileOperations::readFiles(std::vector<std::string> files, readingFunction r
 	//This function will loop thorugh every single file through readFile (WARNING: THIS FUNCTION WILL TAKE SOME TIME, RUN ON THREAD!)
 	for (unsigned int n_entries = 0; n_entries < files.size(); n_entries++)
 		readFile(files[n_entries], rf, pt); //reads every single one file.
+}
+
+std::string fileOperations::rootDirectoryOfFile(std::string file)
+{
+	if (file.rfind("\\") != string::npos && file.rfind("/") != string::npos)
+	{
+		//if both slash is present
+		(file.rfind("\\") < file.rfind("/")) ? (return file.substr(0, file.rfind("/") + 1)) : (return file.substr(0, file.rfind("\\") + 1))
+	}
+	else
+	{
+		(file.rfind("\\") != string::npos) ? (return file.substr(0, file.rfind("\\") + 1)) : ()
+		(file.rfind("/") != string::npos) ? (return file.substr(0, file.rfind("/") + 1)) : ()
+	}
+	return file;
+}
+
+void osuFileOperations::readSingleFile(std::vector<osuBeatmap> *array, std::string file, ProgressTracker *pt)
+{
+	std::ifstream fs(file.c_str(), std::fstream::in); //starts to read the file.
+
+	std::string buffer; //this will store the current line
+	osuBeatmap b_newBeatmap; //return value in the making
+	/*Search for the fields in the file*/
+	while (std::getline(fs, buffer))
+	{
+		/*If statement block*/
+		if (buffer.find("AudioFilename") != string::npos)
+		{
+			std::string MusicLocation = fileOperations::rootDirectoryOfFile + buffer.substr(buffer.find(":") + 1, string::npos);
+			if (MusicLocation[0] == " ")
+			{
+				MusicLocation.erase(0);
+			}
+
+			b_newBeatmap.MusicLocation = MusicLocation;
+		}
+		if (buffer.find("Title") != string::npos)
+		{
+			b_newBeatmap.BeatmapName = buffer.substr(buffer.find(":") + 1, string::npos);
+		}
+		//if (buffer.find())
+	}
 }
