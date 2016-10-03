@@ -11,9 +11,8 @@
 
 namespace fileOperations
 {
-	std::vector<std::wstring> FindFiles(std::string directory, std::wstring fileType, ProgressTracker *pt = 0); //find files
-	//std::vector<std::string> FindFiles(std::string directory, std::wstring fileType, ProgressTracker *pt = 0); //find files
-	//^ I need to implement the above
+	std::vector<std::wstring> FindFiles(std::wstring directory, std::wstring fileType, ProgressTracker *pt = 0); //find files
+	std::vector<std::string> FindFiles(std::string directory, std::string fileType, ProgressTracker *pt = 0); //find files
 };
 
 #endif //File Manager.
