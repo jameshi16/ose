@@ -54,3 +54,16 @@ std::vector<std::string> fileOperations::FindFiles(std::string directory, std::s
 
 	return files; //returns files.
 }
+
+void fileOperations::readFile(std::string file, readingFunction rf, ProgressTracker *pt)
+{
+	*pt << std::string("Reading file ") + file; //reports to progress tracker
+	rf(file, pt); //gives the process to the reading function.
+}
+
+void fileOperations::readFiles(std::vector<std::string> files, readingFunction rf, ProgressTracker *pt)
+{
+	//This function will loop thorugh every single file through readFile (WARNING: THIS FUNCTION WILL TAKE SOME TIME, RUN ON THREAD!)
+	for (unsigned int n_entries = 0; n_entries < files.size(); n_entries++)
+		readFile(files[n_entries], rf, pt); //reads every single one file.
+}
