@@ -1,6 +1,14 @@
 #include "commandHandler.h"
 
+//Standard headers
+#include <functional>
+
+//Boost headers
 #include <boost/filesystem.hpp>
+
+//Self headers
+#include "FileIO/FileManager.h"
+#include "osuBeatmap.h"
 
 /* Needed to make the whole file work (Declaration of Commands) */
 namespace Commands
@@ -9,7 +17,8 @@ namespace Commands
 	{ /*List of commands here*/
 		std::pair<std::string, commandFunction>("lc", printAllCommands), //print all commands
 		std::pair<std::string, commandFunction>("print", print), //print all arguments
-		std::pair<std::string, commandFunction>("testTag", testTaggingOnFile)
+		std::pair<std::string, commandFunction>("testTag", testTaggingOnFile), //test tagging on a single file
+		std::pair<std::string, commandFunction>("testOsuTag", testOsuTag) //test tag on osu directory
 	}; //pretty cool, right?
 }
 
@@ -156,6 +165,18 @@ std::string Arguments::removeAllSpaces(std::string s)
 	return s;
 }
 
+void Arguments::removeEmptyArguments()
+{
+	for (unsigned int iii = 0; iii < v_Arguments.size(); iii++)
+	{
+		while (removeAllSpaces(v_Arguments[iii]) == "" && v_Arguments.size() != 0) //keeps swapping with the last element until the argument is valid (unless everything has been swapped)
+		{
+			v_Arguments[iii].swap(v_Arguments.back()); //swaps with the last argument
+			v_Arguments.erase(v_Arguments.end()); //erases the argument at the back
+		}
+	}
+}
+
 int Arguments::size()
 { return v_Arguments.size(); }
 
@@ -207,4 +228,19 @@ void Commands::testTaggingOnFile(ProgressTracker* pt, Arguments a)
 
 		*pt << "Sucessfully tagged";
 	}
+}
+
+void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
+{
+	a.removeEmptyArguments(); //removes all the empty arguments
+
+	using namespace fileOperations; //lazy
+	using namespace osuFileOperations; //also lazy
+
+	std::vector<osuBeatmap> *obv = new std::vector<osuBeatmap>; //initialized osuBeamap vector
+
+	std::function<void(std::string, ProgressTracker*)> f_osu = std::bind(readSingleFile, obv, std::placeholders::_1, std::placeholders::_2); //new function (using auto, very convinient thing!)
+
+	if (a[0] != "")
+		readFiles(FindFiles(a[0], ".osu", pt), f_osu, pt); //read files
 }

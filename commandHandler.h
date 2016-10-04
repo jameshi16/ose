@@ -67,6 +67,8 @@ public:
 	std::string getArgument(int);
 	void setArgument(int, std::string);
 
+	void removeEmptyArguments();
+
 	int size();
 
 protected:
@@ -84,6 +86,7 @@ namespace Commands
 	void printAllCommands(ProgressTracker* pt, Arguments a);
 	void print(ProgressTracker* pt, Arguments a);
 	void testTaggingOnFile(ProgressTracker* pt, Arguments a);
+	void testOsuTag(ProgressTracker* pt, Arguments a);
 
 	typedef void (*commandFunction)(ProgressTracker*, Arguments);
 	extern std::map<std::string, commandFunction> commandsAvailable;
