@@ -13,7 +13,7 @@
 /* Needed to make the whole file work (Declaration of Commands) */
 namespace Commands
 {
-	std::map<std::string, commandFunction> commandsAvailable = 
+	std::map<std::string, commandFunction> commandsAvailable =
 	{ /*List of commands here*/
 		std::pair<std::string, commandFunction>("lc", printAllCommands), //print all commands
 		std::pair<std::string, commandFunction>("print", print), //print all arguments
@@ -132,7 +132,7 @@ void Arguments::splitArguments()
 	//This is for the last argument.
 	std::string lastArgumentBuffer = "";
 	n_lastPosition = 0;
-	
+
 	if (buffer.find(" "), 0 != std::string::npos)
 	{
 		//If it does find " "
@@ -199,7 +199,7 @@ void Commands::print(ProgressTracker* pt, Arguments a)
 			*pt << std::string("Argument: ") + a.getArgument(iii);
 		}
 
-		*pt << std::string("Full argument passed: ") + a.getFullArgument();	
+		*pt << std::string("Full argument passed: ") + a.getFullArgument();
 	}
 }
 
@@ -234,6 +234,11 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 {
 	a.removeEmptyArguments(); //removes all the empty arguments
 
+	if (a.size() != 2) //only do this function if there are exactly two arguments
+	{
+		*pt << "Command syntax: testOsuTag <source> <destination>";
+	}
+
 	using namespace fileOperations; //lazy
 	using namespace osuFileOperations; //also lazy
 
@@ -241,6 +246,33 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 
 	std::function<void(std::string, ProgressTracker*)> f_osu = std::bind(readSingleFile, obv, std::placeholders::_1, std::placeholders::_2); //new function (using auto, very convinient thing!)
 
-	if (a[0] != "")
-		readFiles(FindFiles(a[0], ".osu", pt), f_osu, pt); //read files
+	if (a[0] == "")
+		return; //returns straight away
+
+	//Changes both arguments into working paths
+	if (a[0][a[0].length() - 1] != '\\' || a[0][a[0].length() - 1] != '/')
+		a[0][a[0].length()] = '/';
+
+	if (a[1][a[1].length() - 1] != '\\' || a[1][a[1].length()- 1] != '/')
+		a[1][a[1].length()] = '/';
+
+	//Read the files
+	readFiles(FindFiles(a[0], ".osu", pt), f_osu, pt); //read files
+
+	//Removes duplicates
+	osuBeatmapFunctions::fixBeatmapDuplicates(*obv); //fixes the beatmap duplicates
+
+	//Copies the mp3 files to the working folder
+	for (unsigned int iii = 0; iii < obv->size(); iii++) //will modify osuBeatmap
+	{
+		copyFile(obv->at(iii).MusicLocation, a[1] + justTheFile(obv->at(iii).MusicLocation)); //copies each and every file
+		obv->at(iii).MusicLocation = a[1] + justTheFile(obv->at(iii).MusicLocation); //sets the osubeatmap again.
+	}
+
+	//Tag the audio
+	for (unsigned int iii = 0; iii < obv->size(); iii++) //will *not* modify osuBeatmap
+	{
+		TagAgent ta;
+		ta.autoTag(obv->at(iii)); //tags the files
+	}
 }
