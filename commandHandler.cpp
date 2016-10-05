@@ -119,6 +119,12 @@ void Arguments::splitArguments()
 	int n_lastPosition = 0; //sets last position
 	while (buffer.find(" ", n_lastPosition) != std::string::npos) //this is the while loop
 	{
+		if ((buffer[buffer.find(" ", n_lastPosition) - 1] != ' ' || buffer[buffer.find(" ", n_lastPosition) - 1] != '\0') && (buffer.find("\"") != string::npos) && (buffer.find("\"", n_lastPosition) < buffer.find(" ", n_lastPosition))) //if quotes are found
+		{
+			v_Arguments.push_back(buffer.substr(buffer.find("\"", n_lastPosition) + 1, buffer.find("\"", buffer.find("\"", n_lastPosition) + 1) - buffer.find("\"", n_lastPosition) - 1)); //finds arguments within a quote
+			n_lastPosition = buffer.find("\"", n_lastPosition + 1) + 1; //sets n_lastPosition to the latest position
+			continue; //don't process the things below
+		}
 		if (buffer[buffer.find(" ", n_lastPosition) - 1] != ' ' || buffer[buffer.find(" ", n_lastPosition) - 1] != '\0') //if the character next to found "space" is blank, or if the argument found before "space" is blank
 		{
 			v_Arguments.push_back(removeAllSpaces(buffer.substr(n_lastPosition, buffer.find(" ", n_lastPosition) - n_lastPosition))); //pushes back this anonymous string
@@ -149,6 +155,7 @@ void Arguments::splitArguments()
 		v_Arguments.push_back(removeAllSpaces(lastArgumentBuffer));
 	}
 
+	removeEmptyArguments(); //remove all the empty arguments that might be generated from this function
 	//Done.
 }
 
