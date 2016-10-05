@@ -37,7 +37,7 @@ void osuBeatmapFunctions::fixBeatmapDuplicates(vector<osuBeatmap> &vec_)
 	osuBeatmap ob_Buffer;
 	for (unsigned int iii = 0; iii < vec_.size(); iii++)
 	{
-		if (ob_Buffer.BeatmapName == vec_[iii].BeatmapName 
+		if (ob_Buffer.BeatmapName == vec_[iii].BeatmapName
 			|| ob_Buffer.BackgroundPhoto == vec_[iii].BackgroundPhoto
 			|| ob_Buffer.MusicLocation == vec_[iii].MusicLocation)
 		{
@@ -49,7 +49,7 @@ void osuBeatmapFunctions::fixBeatmapDuplicates(vector<osuBeatmap> &vec_)
 	/*This loop will remove all of the osuBeatmap{"","",""} from the vector*/
 	for (unsigned int iii = 0; iii < vec_.size(); iii++) //vec_ size changes in the loop
 	{
-		if (vec_[iii] == osuBeatmap{"","",""})
+		while (vec_[iii] == osuBeatmap{"","",""})
 			vec_.erase(vec_.begin() + iii); //erases the element
 	}
 	//end of function
