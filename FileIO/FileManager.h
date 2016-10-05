@@ -23,8 +23,12 @@ namespace fileOperations
 	void readFile(std::string file, std::function<void(std::string, ProgressTracker*)> rf, ProgressTracker *pt = 0); //reads the file using provided function (wrapper kinda function)
 	void readFiles(std::vector<std::string> files, std::function<void(std::string, ProgressTracker*)> rf, ProgressTracker *pt = 0); //reads all the files using provided function
 
+	/*File copying sorcery (non-osu specific)*/
+	void copyFile(std::string sourceFile, std::string destinationFile); //copy files
+
 	/*String reducing sorcery*/
 	std::string rootDirectoryOfFile(std::string);
+	std::string justTheFile(std::string);
 };
 
 namespace osuFileOperations

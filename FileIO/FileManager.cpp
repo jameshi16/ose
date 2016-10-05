@@ -73,7 +73,7 @@ void fileOperations::readFiles(std::vector<std::string> files, std::function<voi
 
 std::string fileOperations::rootDirectoryOfFile(std::string file)
 {
-	if (file.rfind("\\") != string::npos && file.rfind("/") != string::npos)
+	if (file.rfind("\\") != std::string::npos && file.rfind("/") != std::string::npos)
 	{
 		//if both slash is present
 		if (file.rfind("\\") < file.rfind("/"))
@@ -83,13 +83,47 @@ std::string fileOperations::rootDirectoryOfFile(std::string file)
 	}
 	else
 	{
-		if (file.rfind("\\") != string::npos)
+		if (file.rfind("\\") != std::string::npos)
 			return file.substr(0, file.rfind("\\") + 1);
 
-		if (file.rfind("/") != string::npos)
+		if (file.rfind("/") != std::string::npos)
 			return file.substr(0, file.rfind("/") + 1);
 	}
 	return file;
+}
+
+std::string fileOperations::justTheFile(std::string file)
+{
+	if (file.rfind("\\") != string::npos && file.rfind("/") != std::string::npos) //if there are both \\ and /
+	{
+		if (file.rfind("\\") > file.rfind("/")) //if \\ is last
+		{
+			return file.substr(file.rfind("\\") + 1, std::string::npos); //return the file only
+		}
+		if (file.rfind("/") > file.rfind("\\")) //if / is last
+		{
+			return file.substr(file.rfind("/") + 1, std::string::npos); //return the file only
+		}
+	}
+
+	if (file.rfind("\\") != std::string::npos)
+		return file.substr(file.rfind("\\") + 1, std::string::npos); //return the file only
+
+	if (file.rfind("/") != std::string::npos)
+		return file.substr(file.rfind("/") + 1, std::string::npos); //return the file only
+
+	return file; //default
+}
+
+void fileOperations::copyFile(std::string sourceFile, std::string destinationFile)
+{
+	std::ifstream src(sourceFile.c_str(), std::ios::binary); //source file
+	std::ofstream out(destinationFile.c_str(), std::ios::binary); //destination
+
+	out << src.rdbuf(); //copies it to the output
+
+	src.close(); //closes the buffer
+	out.close(); //closes the buffer
 }
 
 void osuFileOperations::readSingleFile(std::vector<osuBeatmap> *array, std::string file, ProgressTracker *pt)
