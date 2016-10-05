@@ -27,8 +27,9 @@ namespace fileOperations
 	void copyFile(std::string sourceFile, std::string destinationFile); //copy files
 
 	/*String reducing sorcery*/
-	std::string rootDirectoryOfFile(std::string);
-	std::string justTheFile(std::string);
+	std::string rootDirectoryOfFile(std::string); //find the root directory of the file
+	std::string justTheFile(std::string); //find the file only
+	std::string rmFrontEmptyCharacter(std::string); //remove the empty first character
 };
 
 namespace osuFileOperations

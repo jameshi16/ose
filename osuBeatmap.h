@@ -42,11 +42,18 @@ struct osuBeatmap
 /* This structure contains the functions that is used to manipulate the osuBeatmaps*/
 namespace osuBeatmapFunctions
 {
+	enum imageType
+	{
+		NOIMAGE,
+		PNG,
+		JPEG
+	};
+
 	bool isMusicMp3(string); //surface check if music is mp3
 	bool isMusicMp3(osuBeatmap); //can also use osuBeatmap to check
 
-	bool isImagePng(string); //surface check if picture is .png
-	bool isImagePng(osuBeatmap); //can also use osuBeatmap to check
+	imageType isImage(string); //surface check if picture is .png
+	imageType isImage(osuBeatmap); //can also use osuBeatmap to check
 
 	void fixBeatmapDuplicates(vector<osuBeatmap>&); //fix beatmap duplicates
 };

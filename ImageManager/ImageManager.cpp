@@ -6,6 +6,7 @@ wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 {
 	/*Handlers*/
 	wxImage::AddHandler(new wxPNGHandler()); //handler added
+	wxImage::AddHandler(new wxJPEGHandler()); //handler added
 
 	/*Objects*/
 	wxImage theImage(imageLocation); //opens the image
@@ -36,13 +37,16 @@ wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 	return theImage; //returns the image.
 }
 
-TagLib::ByteVectorStream& ImageManipulation::asIOStream(wxImage theImage)
+TagLib::ByteVectorStream& ImageManipulation::asIOStream(wxImage theImage, int imageType)
 {
 	/*Output Stream*/
 	wxMemoryOutputStream theOutStream; //this is where the file is going to be saved
 
 	/*Process*/
-	theImage.SaveFile(theOutStream, "image/png"); //saves the file into the output stream
+	if (imageType == 1)
+		theImage.SaveFile(theOutStream, "image/png"); //saves the file into the output stream
+	if (imageType == 2)
+		theImage.SaveFile(theOutStream, "image/jpeg"); //saves the file into the output stream
 
 	/*Reads the stream into a character array*/
 	char *buffer = new char[theOutStream.GetSize() + 1]; //new character array

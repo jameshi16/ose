@@ -42,7 +42,7 @@ public:
 namespace ImageManipulation
 {
 	wxImage makePerfectSize(std::string); //resizes the image to the perfect size
-	TagLib::ByteVectorStream& asIOStream(wxImage); //takes the wxImage and returns it as a stream
+	TagLib::ByteVectorStream& asIOStream(wxImage, int); //takes the wxImage and returns it as a stream
 };
 
 #endif //ImageManagerHEADER

@@ -16,21 +16,27 @@ bool osuBeatmapFunctions::isMusicMp3(osuBeatmap ob)
 }
 
 /* Finds out if the file given is an Mp3 */
-bool osuBeatmapFunctions::isImagePng(string s_string)
+osuBeatmapFunctions::imageType osuBeatmapFunctions::isImage(string s_string)
 {
 	if (s_string.rfind(".png") != string::npos && s_string.rfind(".png") == s_string.size() - 4)
-		return true; //returns true
+		return PNG; //returns png
 
-	return false; //default return
+	if (s_string.rfind(".jpg") != string::npos && s_string.rfind(".jpg") == s_string.size() - 4)
+		return JPEG; //returns jpeg
+
+	if (s_string.rfind(".jpeg") != string::npos && s_string.rfind(".jpeg") == s_string.size() - 4)
+		return JPEG; //returns jpeg
+
+	return NOIMAGE; //default return
 }
 
 /* Finds out if the osuBeatmap structure given is an Mp3 */
-bool osuBeatmapFunctions::isImagePng(osuBeatmap ob)
+osuBeatmapFunctions::imageType osuBeatmapFunctions::isImage(osuBeatmap ob)
 {
-	return isImagePng(ob.BackgroundPhoto); //use already defined function
+	return isImage(ob.BackgroundPhoto); //use already defined function
 }
 
-/* Find duplicates of beatmaps */
+/* Find duplicates of beatmaps (Code is broken)*/
 void osuBeatmapFunctions::fixBeatmapDuplicates(vector<osuBeatmap> &vec_)
 {
 	/*Memory buffer of the members to compare*/
@@ -49,7 +55,7 @@ void osuBeatmapFunctions::fixBeatmapDuplicates(vector<osuBeatmap> &vec_)
 	/*This loop will remove all of the osuBeatmap{"","",""} from the vector*/
 	for (unsigned int iii = 0; iii < vec_.size(); iii++) //vec_ size changes in the loop
 	{
-		while (vec_[iii] == osuBeatmap{"","",""})
+		while (vec_[iii] == osuBeatmap{"","",""} && vec_.size() != 0)
 			vec_.erase(vec_.begin() + iii); //erases the element
 	}
 	//end of function

@@ -232,6 +232,7 @@ void Commands::testTaggingOnFile(ProgressTracker* pt, Arguments a)
 
 void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 {
+	/*Clean up block*/
 	a.removeEmptyArguments(); //removes all the empty arguments
 
 	if (a.size() != 2) //only do this function if there are exactly two arguments
@@ -250,23 +251,30 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 		return; //returns straight away
 
 	//Changes both arguments into working paths
-	if (a[0][a[0].length() - 1] != '\\' || a[0][a[0].length() - 1] != '/')
+	if (a[0][a[0].length() - 1] != '\\' && a[0][a[0].length() - 1] != '/')
 		a[0][a[0].length()] = '/';
 
-	if (a[1][a[1].length() - 1] != '\\' || a[1][a[1].length()- 1] != '/')
+	if (a[1][a[1].length() - 1] != '\\' && a[1][a[1].length()- 1] != '/')
 		a[1][a[1].length()] = '/';
 
 	//Read the files
 	readFiles(FindFiles(a[0], ".osu", pt), f_osu, pt); //read files
 
 	//Removes duplicates
-	osuBeatmapFunctions::fixBeatmapDuplicates(*obv); //fixes the beatmap duplicates
+	//osuBeatmapFunctions::fixBeatmapDuplicates(*obv); //fixes the beatmap duplicates
 
 	//Copies the mp3 files to the working folder
 	for (unsigned int iii = 0; iii < obv->size(); iii++) //will modify osuBeatmap
 	{
 		copyFile(obv->at(iii).MusicLocation, a[1] + justTheFile(obv->at(iii).MusicLocation)); //copies each and every file
 		obv->at(iii).MusicLocation = a[1] + justTheFile(obv->at(iii).MusicLocation); //sets the osubeatmap again.
+
+		//Console output
+		*pt << "";
+		*pt << "Copied: ";
+		*pt << std::string("Beatmap Name: ") + obv->at(iii).BeatmapName;
+		*pt << std::string("Music Location: ") + obv->at(iii).MusicLocation;
+		*pt << std::string("Background Photo Location: ") + obv->at(iii).BackgroundPhoto;
 	}
 
 	//Tag the audio
