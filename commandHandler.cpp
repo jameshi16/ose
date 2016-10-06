@@ -117,9 +117,9 @@ void Arguments::splitArguments()
 	std::string buffer = s_fullArgument; //sets full argument
 
 	int n_lastPosition = 0; //sets last position
-	while (buffer.find(" ", n_lastPosition) != std::string::npos) //this is the while loop
+	while ((buffer.find(" ", n_lastPosition) != std::string::npos) && !(static_cast<unsigned int>(n_lastPosition) >= s_fullArgument.size())) //this is the while loop (doesn't when n_lastPosition is above string length)
 	{
-		if ((buffer[buffer.find(" ", n_lastPosition) - 1] != ' ' || buffer[buffer.find(" ", n_lastPosition) - 1] != '\0') && (buffer.find("\"") != string::npos) && (buffer.find("\"", n_lastPosition) < buffer.find(" ", n_lastPosition))) //if quotes are found
+		if ((buffer.find("\"", n_lastPosition) != string::npos) && ((buffer.find(" ", n_lastPosition) != string::npos) || (buffer.find("\"", n_lastPosition) < buffer.find(" ", n_lastPosition)))) //if quotes are found
 		{
 			v_Arguments.push_back(buffer.substr(buffer.find("\"", n_lastPosition) + 1, buffer.find("\"", buffer.find("\"", n_lastPosition) + 1) - buffer.find("\"", n_lastPosition) - 1)); //finds arguments within a quote
 			n_lastPosition = buffer.find("\"", n_lastPosition + 1) + 1; //sets n_lastPosition to the latest position
@@ -132,18 +132,18 @@ void Arguments::splitArguments()
 		}
 		else
 		{
-			buffer.erase(n_lastPosition + 1, 1); //erases the blank and tries to find more arguments
+			n_lastPosition++; //instead of erasing the string (which might break stuff), increases n_lastPosition instead
 		}
 	}
 	//This is for the last argument.
 	std::string lastArgumentBuffer = "";
 	n_lastPosition = 0;
 
-	if (buffer.find(" "), 0 != std::string::npos)
+	if (buffer.find(" "), 0 != std::string::npos && ((buffer.rfind("\"") < buffer.rfind(" ")) || (buffer.rfind("\"") == std::string::npos)))
 	{
 		//If it does find " "
 		lastArgumentBuffer = buffer.substr(buffer.find_last_of(" ") + 1, buffer.length() - buffer.find_last_of(" ")); //the last space represents the last argument
-	}
+	} if ((buffer.rfind("\"") > buffer.rfind(" ")) && (buffer.rfind("\"") != std::string::npos)) {/*don't do anything, literally.*/}
 	else
 	{
 		//If it doesn't find " "
