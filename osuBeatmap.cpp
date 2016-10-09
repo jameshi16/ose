@@ -43,20 +43,29 @@ void osuBeatmapFunctions::fixBeatmapDuplicates(vector<osuBeatmap> &vec_)
 	osuBeatmap ob_Buffer;
 	for (unsigned int iii = 0; iii < vec_.size(); iii++)
 	{
-		if (ob_Buffer.BeatmapName == vec_[iii].BeatmapName
-			|| ob_Buffer.BackgroundPhoto == vec_[iii].BackgroundPhoto
-			|| ob_Buffer.MusicLocation == vec_[iii].MusicLocation)
+		if (!(vec_[iii] == osuBeatmap{"","",""}))
 		{
-			vec_[iii] = osuBeatmap{"","",""}; //empty it out first ()
+			for (unsigned int jjj = 0; jjj < vec_.size(); jjj++) //a loop to see if the buffer matches with anything already in the array
+			{
+					if (iii == jjj) //if the indexing is the same, just continue
+						continue;
+
+					if (vec_[iii].BeatmapName == vec_[jjj].BeatmapName)
+					{
+						vec_[jjj] = osuBeatmap{"","",""}; //sets the vec at [jjj] to be empty
+					}
+				}
 		}
-		ob_Buffer = vec_[iii]; //Simple and easy
 	}
 
 	/*This loop will remove all of the osuBeatmap{"","",""} from the vector*/
 	for (unsigned int iii = 0; iii < vec_.size(); iii++) //vec_ size changes in the loop
 	{
 		while (vec_[iii] == osuBeatmap{"","",""} && vec_.size() != 0)
-			vec_.erase(vec_.begin() + iii); //erases the element
+		{
+			swap(vec_[iii], vec_.back()); //swaps with the last element
+			vec_.erase(vec_.end()); //erases the last element
+		}
 	}
 	//end of function
 }

@@ -448,7 +448,7 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 	}
 
 	//Read the files
-	readFiles(FindFiles(a[n_input], ".osu", pt), f_osu, pt); //read files
+	readFiles(FindFiles(a.getArgumentString(n_input), ".osu", pt), f_osu, pt); //read files
 
 	//Removes duplicates
 	//osuBeatmapFunctions::fixBeatmapDuplicates(*obv); //fixes the beatmap duplicates
@@ -456,8 +456,8 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 	//Copies the mp3 files to the working folder
 	for (unsigned int iii = 0; iii < obv->size(); iii++) //will modify osuBeatmap
 	{
-		copyFile(obv->at(iii).MusicLocation, a[n_output] + justTheFile(obv->at(iii).MusicLocation)); //copies each and every file
-		obv->at(iii).MusicLocation = a[n_output] + justTheFile(obv->at(iii).MusicLocation); //sets the osubeatmap again.
+		copyFile(obv->at(iii).MusicLocation, a.getArgumentString(n_output) + justTheFile(obv->at(iii).MusicLocation)); //copies each and every file
+		obv->at(iii).MusicLocation = a.getArgumentString(n_output) + justTheFile(obv->at(iii).MusicLocation); //sets the osubeatmap again.
 
 		//Console output
 		*pt << "";
