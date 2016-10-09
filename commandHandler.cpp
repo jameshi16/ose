@@ -185,15 +185,27 @@ void Arguments::splitArguments()
 	/*Command parsers*/
 	const std::function<std::string(unsigned int)> parsePure = [buffer, &iterator, this](unsigned int pos)
 	{
-		unsigned int nextEmptyPos = buffer.find(" ", pos + 1 /*Start to search for " " 1 position after the position provided*/);
+		unsigned int nextEmptyPos = 0;
+
+		if ((nextEmptyPos = buffer.find(" ", pos + 1 /*Start to search for " " 1 position after the position provided*/)) == std::string::npos)
+		{
+			iterator = buffer.size(); //sets iterator to max point
+			return removeAllSpaces(buffer.substr(pos, std::string::npos)); //Copies everything
+		}
 
 		iterator = nextEmptyPos - 1 /*To remove the space at the end*/;
-		return removeAllSpaces(buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/));
+		return removeAllSpaces(buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/));
 	};
 
 	const std::function<std::string(unsigned int)> parseQuote = [buffer, &iterator, quoteSyntax](unsigned int pos)
 	{
-		unsigned int nextQuotePos = buffer.find(quoteSyntax, pos + 1 /*Start to search for "\"" 1 position after the position provided*/);
+		unsigned int nextQuotePos = 0;
+
+		if ((nextQuotePos = buffer.find(quoteSyntax, pos + 1 /*Start to search for "\"" 1 position after the position provided*/)) == std::string::npos)
+		{
+			iterator = buffer.size(); //sets iterator to max point
+			return buffer.substr(pos + 1 /*starts copying from the next character on*/, std::string::npos); //copies everything
+		}
 
 		iterator = nextQuotePos + 1 /*Skips the quote*/;
 		return buffer.substr(pos + 1 /*starts copying from the next character on*/, iterator - 1 /*To remove the quote at the end*/ - 1 /*To remove adjustment to iterator*/ - pos /*removes the original value of iterator*/);
@@ -201,17 +213,30 @@ void Arguments::splitArguments()
 
 	const std::function<std::string(unsigned int)> parseParameter = [buffer, &iterator, this, &parseQuote, &parsePure, &isValidQuote, &isValidPure](unsigned int pos)
 	{
-		unsigned int emptyPosition = buffer.find(" ", pos);
+		unsigned int emptyPosition;
+
+		if ((emptyPosition = buffer.find(" ", pos)) == std::string::npos)
+		{
+			iterator = buffer.size(); //sets iterator to max point
+			return removeAllSpaces(buffer.substr(pos, std::string::npos)); //copies everything
+		}
+
 		if (isValidQuote(emptyPosition + 1))
 		{
 			iterator = emptyPosition;
-			return buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/) + parseQuote(emptyPosition + 1);
+			std::string debug = buffer.substr(pos, iterator - pos + 1);
+			std::string debug2 = parseQuote(emptyPosition + 1);
+
+			iterator = emptyPosition;
+
+			std::string debug3 = buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/) + parseQuote(emptyPosition + 1);
+			return buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/) + parseQuote(emptyPosition + 1);
 		}
 
-		if (isValidPure(emptyPosition))
+		if (isValidPure(emptyPosition + 1))
 		{
 			iterator = emptyPosition;
-			return buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/) + parsePure(emptyPosition);
+			return buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/) + parsePure(emptyPosition + 1);
 		}
 
 		iterator = emptyPosition;
@@ -221,7 +246,7 @@ void Arguments::splitArguments()
 	/*Order of detection: Parameter, Pure, Quote*/
 	while (true)
 	{
-		if (iterator > buffer.size() || iterator == std::string::npos)
+		if (iterator >= buffer.size() || iterator == std::string::npos)
 		{ iterator = 0; break; } //escapes the loop
 
 		if (isValidParameter(iterator)) //Parameter detection
