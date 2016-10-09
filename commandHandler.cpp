@@ -224,19 +224,23 @@ void Arguments::splitArguments()
 		if (isValidQuote(emptyPosition + 1))
 		{
 			iterator = emptyPosition;
-			std::string debug = buffer.substr(pos, iterator - pos + 1);
-			std::string debug2 = parseQuote(emptyPosition + 1);
+			std::string s_param = buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/);
+			std::string s_quote = parseQuote(emptyPosition + 1); //parses the quote
 
-			iterator = emptyPosition;
+			//For some reason, buffer.substr(pos, iterator - pos + 1) + parseQuote(emptyPosition + 1) does not work!
 
-			std::string debug3 = buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/) + parseQuote(emptyPosition + 1);
-			return buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/) + parseQuote(emptyPosition + 1);
+			return s_param + s_quote; //returns the sum
 		}
 
 		if (isValidPure(emptyPosition + 1))
 		{
 			iterator = emptyPosition;
-			return buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/) + parsePure(emptyPosition + 1);
+			std::string s_param = buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/);
+			std::string s_pure  = parsePure(emptyPosition + 1);
+
+			//For some reason, buffer.substr(pos, iterator - pos + 1) + parsePure(emptyPosition + 1) does not work!
+
+			return s_param + s_pure;
 		}
 
 		iterator = emptyPosition;
