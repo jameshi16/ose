@@ -121,6 +121,10 @@ void Arguments::splitArguments()
 	const std::string parameterSyntax = "-"; //this is the paramter syntax
 	const std::string quoteSyntax			= "\""; //this is the quote syntax
 
+	/*Fast Checks*/
+	if (buffer == "") {return;}
+	if (removeAllSpaces(buffer) == "") {return;}
+
 	/*Validity checkers*/
 	const std::function<bool(unsigned int)> isValidParameter = [buffer, parameterSyntax](unsigned int pos)
 	{
@@ -310,6 +314,36 @@ void Arguments::removeEmptyArguments()
 	}
 }
 
+int Arguments::getArgumentPos(std::string s)
+{
+	if (s == "")
+		return EMPTY_STRING; //return empty string error
+
+	if (s[0] != '-')
+		s.insert(0, "-"); //inserts the paramSyntax
+
+	for (int iii = 0; iii < size(); iii++) //tries to find s within the array
+	{
+		if (v_Arguments[iii].find(s) != std::string::npos)
+			return iii;
+	}
+
+	return NOTFOUND; //return not found
+}
+
+std::string Arguments::getArgumentString(int pos)
+{
+	std::string buffer = getArgument(pos); //gets the argument at the position
+
+	unsigned int emptyPosition; //empty position
+	if ((emptyPosition = buffer.find(" ")) != std::string::npos)
+	{
+		return buffer.substr(emptyPosition + 1 /*Copies from after the blank*/, std::string::npos /*copies the whole string afterwards*/); //returns the argument string
+	}
+
+	return ""; //default return
+}
+
 int Arguments::size()
 { return v_Arguments.size(); }
 
@@ -370,7 +404,8 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 
 	if (a.size() != 2) //only do this function if there are exactly two arguments
 	{
-		*pt << "Command syntax: testOsuTag <source> <destination>";
+		*pt << "Command syntax: testOsuTag -i <source> -o <destination>";
+		return;
 	}
 
 	using namespace fileOperations; //lazy
@@ -384,14 +419,36 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 		return; //returns straight away
 
 	//Changes both arguments into working paths
-	if (a[0][a[0].length() - 1] != '\\' && a[0][a[0].length() - 1] != '/')
-		a[0][a[0].length()] = '/';
+	int n_input 	= a.getArgumentPos("-i");
+	int n_output 	= a.getArgumentPos("-o");
 
-	if (a[1][a[1].length() - 1] != '\\' && a[1][a[1].length()- 1] != '/')
-		a[1][a[1].length()] = '/';
+	if (n_input == NOTFOUND && n_output == NOTFOUND)
+	{
+		*pt << "Paths not found. Command syntax: testOsuTag -i <source> -o <destination>";
+		return;
+	}
+
+	if (n_input != NOTFOUND)
+	{
+		if ((a[n_input].rfind("\\") == std::string::npos && a[n_input].rfind("/") == std::string::npos) ||
+		(a[n_input].rfind("\\") != (a[n_input].length() - 1 /*Adjustment from 1 -> 0*/) && a[n_input].rfind("/") != (a[n_input].length() - 1 /*Adjustment from 1 -> 0*/)))
+		{
+			a[n_input].append("/"); //adds a path ender at the end
+			*pt << std::string("Path appended to: " + a.getArgumentString(n_input));
+		}
+	}
+	if (n_output != NOTFOUND)
+	{
+		if ((a[n_output].rfind("\\") == std::string::npos && a[n_output].rfind("/") == std::string::npos) ||
+		(a[n_output].rfind("\\") != (a[n_output].length() - 1 /*Adjustment from 1 -> 0*/) && a[n_output].rfind("/") != (a[n_output].length() - 1 /*Adjustment from 1 -> 0*/)))
+		{
+			a[n_output].append("/"); //adds a path ender at the end
+			*pt << std::string("Path appended to: " + a.getArgumentString(n_output));
+		}
+	}
 
 	//Read the files
-	readFiles(FindFiles(a[0], ".osu", pt), f_osu, pt); //read files
+	readFiles(FindFiles(a[n_input], ".osu", pt), f_osu, pt); //read files
 
 	//Removes duplicates
 	//osuBeatmapFunctions::fixBeatmapDuplicates(*obv); //fixes the beatmap duplicates
@@ -399,8 +456,8 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 	//Copies the mp3 files to the working folder
 	for (unsigned int iii = 0; iii < obv->size(); iii++) //will modify osuBeatmap
 	{
-		copyFile(obv->at(iii).MusicLocation, a[1] + justTheFile(obv->at(iii).MusicLocation)); //copies each and every file
-		obv->at(iii).MusicLocation = a[1] + justTheFile(obv->at(iii).MusicLocation); //sets the osubeatmap again.
+		copyFile(obv->at(iii).MusicLocation, a[n_output] + justTheFile(obv->at(iii).MusicLocation)); //copies each and every file
+		obv->at(iii).MusicLocation = a[n_output] + justTheFile(obv->at(iii).MusicLocation); //sets the osubeatmap again.
 
 		//Console output
 		*pt << "";

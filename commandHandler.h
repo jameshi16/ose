@@ -9,6 +9,13 @@
 #include "tagAgent.h"
 #include "ProgressTracker.h"
 
+
+enum //for argument's error handling
+{
+	EMPTY_STRING = -1,
+	NOTFOUND = -2
+};
+
 class CommandHandler
 {
 public:
@@ -68,6 +75,8 @@ public:
 	void setArgument(int, std::string);
 
 	void removeEmptyArguments();
+	int getArgumentPos(std::string);
+	std::string getArgumentString(int);
 
 	int size();
 
