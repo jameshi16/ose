@@ -113,50 +113,32 @@ void Arguments::setArgument(int iii, std::string s)
 
 void Arguments::splitArguments()
 {
-	//Begin spliting arguments
-	std::string buffer = s_fullArgument; //sets full argument
+	std::string buffer = s_fullArgument; //sets the buffer to the full argument
 
-	int n_lastPosition = 0; //sets last position
-	while ((buffer.find(" ", n_lastPosition) != std::string::npos) && !(static_cast<unsigned int>(n_lastPosition) >= s_fullArgument.size())) //this is the while loop (doesn't when n_lastPosition is above string length)
+	const std::string parameterSyntax = "-"; //this is the paramter syntax
+	const std::string pureSyntax			= " "; //this is the pure syntax
+	const std::string quoteSyntax			= "\""; //this is the quote syntax
+
+	const std::function<bool(unsigned int)> isValidParameter = [buffer](unsigned int pos)
 	{
-		if ((buffer.find("\"", n_lastPosition) != string::npos) && ((buffer.find(" ", n_lastPosition) != string::npos) || (buffer.find("\"", n_lastPosition) < buffer.find(" ", n_lastPosition)))) //if quotes are found
+		if (buffer[pos + 1] != '\0' && buffer[pos + 2] == ' ') //if the character at the next position is a letter of any sort, and the character and the next 2 positions is a blank
+			return true; //then the paramter is a valid parameter
+
+		return false; //it is not a valid paramter
+	};
+
+	/*First, parameter detection system (after detection, the buffer is altered to remove the parameters)*/
+	while (true)
+	{
+		if (buffer.find(parameterSyntax) != std::string::npos) //if a paramter synax is found
 		{
-			v_Arguments.push_back(buffer.substr(buffer.find("\"", n_lastPosition) + 1, buffer.find("\"", buffer.find("\"", n_lastPosition) + 1) - buffer.find("\"", n_lastPosition) - 1)); //finds arguments within a quote
-			n_lastPosition = buffer.find("\"", n_lastPosition + 1) + 1; //sets n_lastPosition to the latest position
-			continue; //don't process the things below
-		}
-		if (buffer[buffer.find(" ", n_lastPosition) - 1] != ' ' || buffer[buffer.find(" ", n_lastPosition) - 1] != '\0') //if the character next to found "space" is blank, or if the argument found before "space" is blank
-		{
-			v_Arguments.push_back(removeAllSpaces(buffer.substr(n_lastPosition, buffer.find(" ", n_lastPosition) - n_lastPosition))); //pushes back this anonymous string
-			n_lastPosition = buffer.find(" ", n_lastPosition) + 1; //sets n_lastPosition to the latest position
-		}
-		else
-		{
-			n_lastPosition++; //instead of erasing the string (which might break stuff), increases n_lastPosition instead
+			if (isValidParameter(buffer.find(parameterSyntax)))
+			{
+				//something
+			}
 		}
 	}
-	//This is for the last argument.
-	std::string lastArgumentBuffer = "";
-	n_lastPosition = 0;
 
-	if (buffer.find(" "), 0 != std::string::npos && ((buffer.rfind("\"") < buffer.rfind(" ")) || (buffer.rfind("\"") == std::string::npos)))
-	{
-		//If it does find " "
-		lastArgumentBuffer = buffer.substr(buffer.find_last_of(" ") + 1, buffer.length() - buffer.find_last_of(" ")); //the last space represents the last argument
-	} if ((buffer.rfind("\"") > buffer.rfind(" ")) && (buffer.rfind("\"") != std::string::npos)) {/*don't do anything, literally.*/}
-	else
-	{
-		//If it doesn't find " "
-		lastArgumentBuffer = buffer; //the whole thing is the last argument
-	}
-
-	if (removeAllSpaces(lastArgumentBuffer) != "")
-	{
-		v_Arguments.push_back(removeAllSpaces(lastArgumentBuffer));
-	}
-
-	removeEmptyArguments(); //remove all the empty arguments that might be generated from this function
-	//Done.
 }
 
 std::string Arguments::removeAllSpaces(std::string s)
