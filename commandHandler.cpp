@@ -131,12 +131,18 @@ void Arguments::splitArguments()
 		{
 			if (buffer[pos + 1] != '\0' && buffer.find(" ", pos) != std::string::npos) //if the character at the next position is a letter of any sort, and the character and there is a blank
 				return true; //then the parameter is a valid parameter
+
+			if (buffer[pos + 1] != '\0') //if the character at the next position is a letter of any sort
+				return true; //then the parameter is a valid parameter
 		}
 
 		if (!(static_cast<int>(pos) - 1 < 0)) //instead of using else, I use another if(), just in case iterator becomes maxint
 		{
 			if (buffer[pos + 1] != '\0' && buffer.find(" ", pos) != std::string::npos && buffer[pos - 1] == ' ') // if the character at the next position is a letter of any sort, and the character and there is a blank, and the position before is blank
 				return true; //then the parameter is a valid parameter
+
+			if (buffer[pos + 1] != '\0') //if the character at the next position is a letter of any sort
+				return true; //then the parameter ia a valid parameter
 		}
 
 		return false; //it is not a valid paramter
@@ -217,7 +223,7 @@ void Arguments::splitArguments()
 
 		if ((emptyPosition = buffer.find(" ", pos)) == std::string::npos)
 		{
-			iterator = buffer.size(); //sets iterator to max point
+			iterator = buffer.size() + 1; //sets iterator to max point
 			return removeAllSpaces(buffer.substr(pos, std::string::npos)); //copies everything
 		}
 
@@ -244,13 +250,13 @@ void Arguments::splitArguments()
 		}
 
 		iterator = emptyPosition;
-		return removeAllSpaces(buffer.substr(pos, iterator  - 1 /*To remove the space at the end*/ - pos /*Removes the original value of iterator*/));
+		return removeAllSpaces(buffer.substr(pos, iterator  - 1 /*To remove the space at the end*/ - pos /*Removes the original value of iterator*/ + 1 /*adjustment from 0 -> 1*/));
 	};
 
 	/*Order of detection: Parameter, Pure, Quote*/
 	while (true)
 	{
-		if (iterator >= buffer.size() || iterator == std::string::npos)
+		if (iterator > buffer.size() || iterator == std::string::npos)
 		{ iterator = 0; break; } //escapes the loop
 
 		if (isValidParameter(iterator)) //Parameter detection
@@ -271,7 +277,7 @@ void Arguments::splitArguments()
 			v_Arguments.push_back(s_argument); //sends the argument to the v_Arguments vector
 		}
 
-		iterator++; //increments the iterator
+		++iterator; //increments the iterator
 	}
 
 	/*Clean up of arguments*/
