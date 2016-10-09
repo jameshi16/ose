@@ -113,31 +113,140 @@ void Arguments::setArgument(int iii, std::string s)
 
 void Arguments::splitArguments()
 {
+	/*Variables*/
 	std::string buffer = s_fullArgument; //sets the buffer to the full argument
+	unsigned int iterator = 0; //the iterator
 
+	/*Constant detectors*/
 	const std::string parameterSyntax = "-"; //this is the paramter syntax
-	const std::string pureSyntax			= " "; //this is the pure syntax
 	const std::string quoteSyntax			= "\""; //this is the quote syntax
 
-	const std::function<bool(unsigned int)> isValidParameter = [buffer](unsigned int pos)
+	/*Validity checkers*/
+	const std::function<bool(unsigned int)> isValidParameter = [buffer, parameterSyntax](unsigned int pos)
 	{
-		if (buffer[pos + 1] != '\0' && buffer[pos + 2] == ' ') //if the character at the next position is a letter of any sort, and the character and the next 2 positions is a blank
-			return true; //then the paramter is a valid parameter
+		if (buffer[pos] != parameterSyntax)
+			return false; //if the character at the position is not parameterSyntax
+
+		if (static_cast<int>(pos) - 1 < 0) //if the position before the iterator is nothing
+		{
+			if (buffer[pos + 1] != '\0' && buffer.find(" ", pos) != std::string::npos) //if the character at the next position is a letter of any sort, and the character and there is a blank
+				return true; //then the parameter is a valid parameter
+		}
+
+		if (!(static_cast<int>(pos) - 1 < 0)) //instead of using else, I use another if(), just in case iterator becomes maxint
+		{
+			if (buffer[pos + 1] != '\0' && buffer.find(" ", pos) != std::string::npos && buffer[pos - 1] == ' ') // if the character at the next position is a letter of any sort, and the character and there is a blank, and the position before is blank
+				return true; //then the parameter is a valid parameter
+		}
 
 		return false; //it is not a valid paramter
 	};
 
-	/*First, parameter detection system (after detection, the buffer is altered to remove the parameters)*/
+	const std::function<bool(unsigned int)> isValidPure = [buffer, parameterSyntax, quoteSyntax](unsigned int pos)
+	{
+		if (buffer[pos] == parameterSyntax || buffer[pos] == quoteSyntax)
+			return false; //if the character at the position is not pure
+
+		if (static_cast<int>(pos) - 1 < 0) //if the position before the iterator is nothing
+		{
+			if (buffer[pos + 1] != '\0') //if the character next to the position is not empty
+				return true; //it is a valid pure
+		}
+
+		if (!(static_cast<int>(pos) - 1 < 0)) //instead of using else, I use another if(), just in case iterator becomes maxint
+		{
+			if (buffer[pos + 1] != '\0' && buffer[pos - 1] == ' ') //if the character at the next position is a letter of any sort, and the position before is blank
+			return true; //then the pure is a valid pure
+		}
+
+		return false; //it is not a valid pure
+	};
+
+	const std::function<bool(unsigned int)> isValidQuote = [buffer, quoteSyntax](unsigned int pos)
+	{
+		if (buffer[pos] != quoteSyntax)
+			return false; //if the character at the position is not quoteSyntax
+
+		if (static_cast<int>(pos) - 1 < 0) //if the position before the iterator is nothing
+		{
+			if (buffer[pos + 1] != '\0') //if the character next to the position is not empty
+				return true; //it is a valid quote
+		}
+
+		if (!(static_cast<int>(pos) - 1 < 0)) //instead of using else, I use another if(), just in case iterator becomes maxint
+		{
+			if (buffer[pos + 1] != '\0' && buffer[pos - 1] == ' ') //if the character at the next position is a letter of any sort, and the position before is blank
+			return true; //then the quote is a valid quote
+		}
+
+		return false; //it is not a valid quote
+	};
+
+	/*Command parsers*/
+	const std::function<std::string(unsigned int)> parsePure = [buffer, &iterator, this](unsigned int pos)
+	{
+		unsigned int nextEmptyPos = buffer.find(" ", pos + 1 /*Start to search for " " 1 position after the position provided*/);
+
+		iterator = nextEmptyPos - 1 /*To remove the space at the end*/;
+		return removeAllSpaces(buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/));
+	};
+
+	const std::function<std::string(unsigned int)> parseQuote = [buffer, &iterator, quoteSyntax](unsigned int pos)
+	{
+		unsigned int nextQuotePos = buffer.find(quoteSyntax, pos + 1 /*Start to search for "\"" 1 position after the position provided*/);
+
+		iterator = nextQuotePos + 1 /*Skips the quote*/;
+		return buffer.substr(pos + 1 /*starts copying from the next character on*/, iterator - 1 /*To remove the quote at the end*/ - 1 /*To remove adjustment to iterator*/ - pos /*removes the original value of iterator*/);
+	};
+
+	const std::function<std::string(unsigned int)> parseParameter = [buffer, &iterator, this, &parseQuote, &parsePure, &isValidQuote, &isValidPure](unsigned int pos)
+	{
+		unsigned int emptyPosition = buffer.find(" ", pos);
+		if (isValidQuote(emptyPosition + 1))
+		{
+			iterator = emptyPosition;
+			return buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/) + parseQuote(emptyPosition + 1);
+		}
+
+		if (isValidPure(emptyPosition))
+		{
+			iterator = emptyPosition;
+			return buffer.substr(pos, iterator - pos /*Removes the original value of iterator*/) + parsePure(emptyPosition);
+		}
+
+		iterator = emptyPosition;
+		return removeAllSpaces(buffer.substr(pos, iterator  - 1 /*To remove the space at the end*/ - pos /*Removes the original value of iterator*/));
+	};
+
+	/*Order of detection: Parameter, Pure, Quote*/
 	while (true)
 	{
-		if (buffer.find(parameterSyntax) != std::string::npos) //if a paramter synax is found
+		if (iterator > buffer.size() || iterator == std::string::npos)
+		{ iterator = 0; break; } //escapes the loop
+
+		if (isValidParameter(iterator)) //Parameter detection
 		{
-			if (isValidParameter(buffer.find(parameterSyntax)))
-			{
-				//something
-			}
+			std::string s_argument = parseParameter(iterator); //uses a temporary variable
+			v_Arguments.push_back(s_argument); //sends the argument to the v_Arguments vector
 		}
+
+		if (isValidPure(iterator)) //Pure detection
+		{
+			std::string s_argument = parsePure(iterator); //uses a temporary variable
+			v_Arguments.push_back(s_argument); //sends the argument to the v_Arguments vector
+		}
+
+		if (isValidQuote(iterator)) //Quote detection
+		{
+			std::string s_argument = parseQuote(iterator); //uses a temporary variable
+			v_Arguments.push_back(s_argument); //sends the argument to the v_Arguments vector
+		}
+
+		iterator++; //increments the iterator
 	}
+
+	/*Clean up of arguments*/
+	removeEmptyArguments();
 
 }
 
