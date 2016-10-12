@@ -1,5 +1,7 @@
 #include "osuBeatmap.h" //requires this to work
 
+#include <algorithm> //requires algorithm to work
+
 /* Finds out if the file given is an Mp3 */
 bool osuBeatmapFunctions::isMusicMp3(string s_string)
 {
@@ -40,8 +42,7 @@ osuBeatmapFunctions::imageType osuBeatmapFunctions::isImage(osuBeatmap ob)
 void osuBeatmapFunctions::fixBeatmapDuplicates(vector<osuBeatmap> &vec_)
 {
 	/*Memory buffer of the members to compare*/
-	osuBeatmap ob_Buffer;
-	for (unsigned int iii = 0; iii < vec_.size(); iii++)
+	for (unsigned int iii = 0; iii < vec_.size() - 1; iii++)
 	{
 		if (!(vec_[iii] == osuBeatmap{"","",""}))
 		{
@@ -50,7 +51,7 @@ void osuBeatmapFunctions::fixBeatmapDuplicates(vector<osuBeatmap> &vec_)
 					if (iii == jjj) //if the indexing is the same, just continue
 						continue;
 
-					if (vec_[iii].BeatmapName == vec_[jjj].BeatmapName)
+					if (vec_[iii].MusicLocation == vec_[jjj].MusicLocation)
 					{
 						vec_[jjj] = osuBeatmap{"","",""}; //sets the vec at [jjj] to be empty
 					}
@@ -59,13 +60,6 @@ void osuBeatmapFunctions::fixBeatmapDuplicates(vector<osuBeatmap> &vec_)
 	}
 
 	/*This loop will remove all of the osuBeatmap{"","",""} from the vector*/
-	for (unsigned int iii = 0; iii < vec_.size(); iii++) //vec_ size changes in the loop
-	{
-		while (vec_[iii] == osuBeatmap{"","",""} && vec_.size() != 0)
-		{
-			swap(vec_[iii], vec_.back()); //swaps with the last element
-			vec_.erase(vec_.end()); //erases the last element
-		}
-	}
+	vec_.erase(std::remove(vec_.begin(), vec_.end(), osuBeatmap{"", "", ""}), vec_.end()); //removes all the empty vectors
 	//end of function
 }

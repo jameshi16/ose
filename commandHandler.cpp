@@ -422,7 +422,7 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 	int n_input 	= a.getArgumentPos("-i");
 	int n_output 	= a.getArgumentPos("-o");
 
-	if (n_input == NOTFOUND && n_output == NOTFOUND)
+	if (n_input == NOTFOUND || n_output == NOTFOUND)
 	{
 		*pt << "Paths not found. Command syntax: testOsuTag -i <source> -o <destination>";
 		return;
@@ -451,7 +451,7 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 	readFiles(FindFiles(a.getArgumentString(n_input), ".osu", pt), f_osu, pt); //read files
 
 	//Removes duplicates
-	//osuBeatmapFunctions::fixBeatmapDuplicates(*obv); //fixes the beatmap duplicates
+	osuBeatmapFunctions::fixBeatmapDuplicates(*obv); //fixes the beatmap duplicates
 
 	//Copies the mp3 files to the working folder
 	for (unsigned int iii = 0; iii < obv->size(); iii++) //will modify osuBeatmap
