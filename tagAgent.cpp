@@ -2,6 +2,9 @@
 
 void TagAgent::autoTag(osuBeatmap& ob)
 {
+	if (!isMusicMp3(ob))
+		return; //returns straight away if the music file is not mp3
+		
 	TagLib::MPEG::File audioFile(ob.MusicLocation.c_str()); //the audio file
 	TagLib::ID3v2::Tag *t = audioFile.ID3v2Tag(true); //initializes a tag object, with the audiofile, turning on IDv2Tag at the same time
 
@@ -15,27 +18,24 @@ void TagAgent::autoTag(osuBeatmap& ob)
 	t->setComment("Extracted by OSE!"); //sets the comment
 	t->setGenre("osu!"); //sets the genre
 
+	//Returns if neither background photo or music location is found
+	if (!boost::filesystem::exists(boost::filesystem::path(ob.BackgroundPhoto)) || !boost::filesystem::exists(boost::filesystem::path(ob.MusicLocation)))
+		return;
+
 	{
 		using namespace osuBeatmapFunctions;
-		if (isMusicMp3(ob))
+		TagLib::ID3v2::AttachedPictureFrame *frame = new TagLib::ID3v2::AttachedPictureFrame;
+		if (isImage(ob) == PNG)
 		{
-			TagLib::ID3v2::AttachedPictureFrame *frame = new TagLib::ID3v2::AttachedPictureFrame;
-			if (isImage(ob) == PNG)
-			{
-				frame->setMimeType("image/png"); //sets cover art as png file type
-				frame->setPicture(ImageFile(&ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto), PNG)).data()); //set image
-				t->addFrame(frame); //adds frame.
-			}
-			if (isImage(ob) == JPEG)
-			{
-				frame->setMimeType("image/jpeg"); //sets the cover art as jpeg file type
-				frame->setPicture(ImageFile(&ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto), JPEG)).data()); //set image
-				t->addFrame(frame); //adds frame.
-			}
+			frame->setMimeType("image/png"); //sets cover art as png file type
+			frame->setPicture(ImageFile(&ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto), PNG)).data()); //set image
+			t->addFrame(frame); //adds frame.
 		}
-		else
+		if (isImage(ob) == JPEG)
 		{
-			return; //returns straight away, nothing we can do here.
+			frame->setMimeType("image/jpeg"); //sets the cover art as jpeg file type
+			frame->setPicture(ImageFile(&ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto), JPEG)).data()); //set image
+			t->addFrame(frame); //adds frame.
 		}
 	}
 

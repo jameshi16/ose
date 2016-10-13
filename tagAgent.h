@@ -10,6 +10,9 @@
 #include <mpeg/mpegfile.h>
 #include <mpeg/id3v2/frames/attachedpictureframe.h>
 
+//boost filesystem
+#include <boost/filesystem.hpp>
+
 class TagAgent
 {
 public:
@@ -19,7 +22,7 @@ public:
 	}
 	~TagAgent()
 	{
-		
+
 	}
 
 	//Copy constructor
