@@ -37,7 +37,7 @@ wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 	return theImage; //returns the image.
 }
 
-TagLib::ByteVectorStream& ImageManipulation::asIOStream(wxImage theImage, int imageType)
+TagLib::ByteVectorStream* ImageManipulation::asIOStream(wxImage theImage, int imageType)
 {
 	/*Output Stream*/
 	wxMemoryOutputStream theOutStream; //this is where the file is going to be saved
@@ -55,8 +55,7 @@ TagLib::ByteVectorStream& ImageManipulation::asIOStream(wxImage theImage, int im
 	buffer[theOutStream.GetSize()] = '\0'; //null end it.
 
 	/*Write Buffer into ByteVectorStream through ByteVector*/
-	TagLib::ByteVectorStream &bvs = *(new TagLib::ByteVectorStream(TagLib::ByteVector(buffer, theOutStream.GetSize()))); //returns the ByteVectorStream
+	TagLib::ByteVectorStream *bvs = new TagLib::ByteVectorStream(TagLib::ByteVector(buffer, theOutStream.GetSize())); //returns the ByteVectorStream
 	delete[] buffer;
 	return bvs; //returns the ByteVectorStream
-
 }

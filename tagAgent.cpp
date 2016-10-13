@@ -2,9 +2,9 @@
 
 void TagAgent::autoTag(osuBeatmap& ob)
 {
-	if (!isMusicMp3(ob))
+	if (!osuBeatmapFunctions::isMusicMp3(ob))
 		return; //returns straight away if the music file is not mp3
-		
+
 	TagLib::MPEG::File audioFile(ob.MusicLocation.c_str()); //the audio file
 	TagLib::ID3v2::Tag *t = audioFile.ID3v2Tag(true); //initializes a tag object, with the audiofile, turning on IDv2Tag at the same time
 
@@ -28,17 +28,24 @@ void TagAgent::autoTag(osuBeatmap& ob)
 		if (isImage(ob) == PNG)
 		{
 			frame->setMimeType("image/png"); //sets cover art as png file type
-			frame->setPicture(ImageFile(&ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto), PNG)).data()); //set image
+			TagLib::ByteVectorStream *bvs = ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto), PNG);
+			frame->setPicture(ImageFile(bvs).data()); //set image
 			t->addFrame(frame); //adds frame.
+			delete bvs; //frees bvs
 		}
 		if (isImage(ob) == JPEG)
 		{
 			frame->setMimeType("image/jpeg"); //sets the cover art as jpeg file type
-			frame->setPicture(ImageFile(&ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto), JPEG)).data()); //set image
+			TagLib::ByteVectorStream *bvs = ImageManipulation::asIOStream(ImageManipulation::makePerfectSize(ob.BackgroundPhoto), JPEG);
+			frame->setPicture(ImageFile(bvs).data()); //set image
 			t->addFrame(frame); //adds frame.
+			delete bvs; //frees bvs
 		}
 	}
 
 	//Ultimately, save the file (Windows doesn't like ID3v2.4 AT ALL. Instead, I'll use ID3v2.3, so that windows can see the cover art.)
 	audioFile.save(TagLib::MPEG::File::TagTypes::AllTags, false, 3);
+
+	//Memory management
+	delete t;
 }

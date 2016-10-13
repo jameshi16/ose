@@ -473,4 +473,7 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 		TagAgent ta;
 		ta.autoTag(obv->at(iii)); //tags the files
 	}
+
+	//Memory management
+	delete obv;
 }
