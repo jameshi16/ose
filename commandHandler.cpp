@@ -18,7 +18,8 @@ namespace Commands
 		std::pair<std::string, commandFunction>("lc", printAllCommands), //print all commands
 		std::pair<std::string, commandFunction>("print", print), //print all arguments
 		std::pair<std::string, commandFunction>("testTag", testTaggingOnFile), //test tagging on a single file
-		std::pair<std::string, commandFunction>("testOsuTag", testOsuTag) //test tag on osu directory
+		std::pair<std::string, commandFunction>("testOsuTag", testOsuTag), //test tag on osu directory
+		std::pair<std::string, commandFunction>("testIfFileMp3", testIfFileMP3) //tests if the file is mp3
 	}; //pretty cool, right?
 }
 
@@ -476,4 +477,17 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 
 	//Memory management
 	delete obv;
+}
+
+//Tests if files are MP3 files.
+void Commands::testIfFileMP3(ProgressTracker* pt, Arguments a)
+{
+	for (int iii = 0; iii < a.size(); iii++)
+	{
+		if (osuBeatmapFunctions::isMusicMp3(a[iii]))
+		{
+			*pt << std::string("Music file (MP3) found at: ") + a[iii]; //a mp3 file has been file!
+			break;
+		}
+	}
 }

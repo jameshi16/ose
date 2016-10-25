@@ -96,6 +96,7 @@ namespace Commands
 	void print(ProgressTracker* pt, Arguments a);
 	void testTaggingOnFile(ProgressTracker* pt, Arguments a);
 	void testOsuTag(ProgressTracker* pt, Arguments a);
+	void testIfFileMP3(ProgressTracker* pt, Arguments a);
 
 	typedef void (*commandFunction)(ProgressTracker*, Arguments);
 	extern std::map<std::string, commandFunction> commandsAvailable;
