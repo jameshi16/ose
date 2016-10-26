@@ -2,6 +2,11 @@
 
 void TagAgent::autoTag(osuBeatmap& ob)
 {
+
+	//Returns if neither background photo or music location is found
+	if (!boost::filesystem::exists(boost::filesystem::path(ob.BackgroundPhoto)) || !boost::filesystem::exists(boost::filesystem::path(ob.MusicLocation)))
+		return;
+		
 	if (!osuBeatmapFunctions::isMusicMp3(ob))
 		return; //returns straight away if the music file is not mp3
 
@@ -17,10 +22,6 @@ void TagAgent::autoTag(osuBeatmap& ob)
 	t->setAlbum("osu!"); //sets the album
 	t->setComment("Extracted by OSE!"); //sets the comment
 	t->setGenre("osu!"); //sets the genre
-
-	//Returns if neither background photo or music location is found
-	if (!boost::filesystem::exists(boost::filesystem::path(ob.BackgroundPhoto)) || !boost::filesystem::exists(boost::filesystem::path(ob.MusicLocation)))
-		return;
 
 	{
 		using namespace osuBeatmapFunctions;
