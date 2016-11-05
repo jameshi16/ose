@@ -16,8 +16,12 @@ void ProgressTracker::initialize(wxRichTextCtrl* init)
 	r_object = init; //makes r_object initialized.
 }
 
+void ProgressTracker::clear()
+{
+	r_object->Clear(); //clears the paragraph
+}
+
 ProgressTracker::~ProgressTracker()
 {
 	//destory world
 }
-

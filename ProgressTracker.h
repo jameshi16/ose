@@ -66,9 +66,10 @@ public:
 	}
 
 	void initialize(wxRichTextCtrl*); //initializeeeee
+	void clear(); //clears the text (not really to track progress, but I figured I might as well put it here)
 	//void initialize(ProgressGuage*); soon, but not now.
 
-	virtual ~ProgressTracker(); //virtual destructor, in case I actually need to change this
+	virtual ~ProgressTracker(); //virtual destructor
 protected:
 public:
 	//ToDo: add progress guage/bar here

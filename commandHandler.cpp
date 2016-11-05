@@ -19,7 +19,8 @@ namespace Commands
 		std::pair<std::string, commandFunction>("print", print), //print all arguments
 		std::pair<std::string, commandFunction>("testTag", testTaggingOnFile), //test tagging on a single file
 		std::pair<std::string, commandFunction>("testOsuTag", testOsuTag), //test tag on osu directory
-		std::pair<std::string, commandFunction>("testIfFileMp3", testIfFileMP3) //tests if the file is mp3
+		std::pair<std::string, commandFunction>("testIfFileMp3", testIfFileMP3), //tests if the file is mp3
+		std::pair<std::string, commandFunction>("clear", clear) //clears the console screen somehow
 	}; //pretty cool, right?
 }
 
@@ -491,3 +492,7 @@ void Commands::testIfFileMP3(ProgressTracker* pt, Arguments a)
 		}
 	}
 }
+
+//Clears the textbox
+void Commands::clear(ProgressTracker *pt, Arguments a)
+{ pt->clear(); /*clears the progress tracker*/ }

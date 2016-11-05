@@ -5,8 +5,11 @@
 wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 {
 	/*Handlers*/
-	wxImage::AddHandler(new wxPNGHandler()); //handler added
-	wxImage::AddHandler(new wxJPEGHandler()); //handler added
+	if (wxImage::FindHandler("PNG file") == NULL || wxImage::FindHandler("JPEG file") == NULL) //checks to ensure that handlers have not already been declared
+	{
+		wxImage::AddHandler(new wxPNGHandler()); //handler added
+		wxImage::AddHandler(new wxJPEGHandler()); //handler added
+	}
 
 	/*Objects*/
 	wxImage theImage(imageLocation); //opens the image
