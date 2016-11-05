@@ -26,7 +26,7 @@ osuBeatmapFunctions::imageType osuBeatmapFunctions::isImage(string s_string)
 	if (s_string.rfind(".jpg") != string::npos && s_string.rfind(".jpg") == s_string.size() - 4)
 		return JPEG; //returns jpeg
 
-	if (s_string.rfind(".jpeg") != string::npos && s_string.rfind(".jpeg") == s_string.size() - 4)
+	if (s_string.rfind(".jpeg") != string::npos && s_string.rfind(".jpeg") == s_string.size() - 5)
 		return JPEG; //returns jpeg
 
 	return NOIMAGE; //default return
