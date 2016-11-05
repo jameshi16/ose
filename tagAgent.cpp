@@ -6,9 +6,13 @@ void TagAgent::autoTag(osuBeatmap& ob)
 	//Returns if neither background photo or music location is found
 	if (!boost::filesystem::exists(boost::filesystem::path(ob.BackgroundPhoto)) || !boost::filesystem::exists(boost::filesystem::path(ob.MusicLocation)))
 		return;
-		
+
 	if (!osuBeatmapFunctions::isMusicMp3(ob))
 		return; //returns straight away if the music file is not mp3
+
+	std::string debugString = ob.MusicLocation;
+	std::string debugString2 = ob.BackgroundPhoto;
+	std::string debugString3 = ob.BeatmapName;
 
 	TagLib::MPEG::File audioFile(ob.MusicLocation.c_str()); //the audio file
 	TagLib::ID3v2::Tag *t = audioFile.ID3v2Tag(true); //initializes a tag object, with the audiofile, turning on IDv2Tag at the same time
@@ -48,5 +52,5 @@ void TagAgent::autoTag(osuBeatmap& ob)
 	audioFile.save(TagLib::MPEG::File::TagTypes::AllTags, false, 3);
 
 	//Memory management
-	delete t;
+	//delete t; (This is the one causing SEGILL, apparently the pointer is handled by TagLib?)
 }
