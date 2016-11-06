@@ -41,17 +41,16 @@ consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPos
 	//*)
 	SetSizer(mainSizer); //sets the sizer
 
-	//Connects (only used when MACROS doesn't let me define an id ;-;)
+	//Binds (only used when MACROS doesn't let me define an id ;-;)
 	textCtrl1->Bind(wxEVT_KEY_DOWN, &consoleScreen::CommandTextCtrlKeyDown, this);
+	this->Bind(wxEVT_THREAD, &consoleScreen::handleThreadedEvent, this);
 
 	//Focus
 	textCtrl1->SetFocus(); //sets textctrl1 as focusable
 }
 
 consoleScreen::~consoleScreen()
-{
-	//trigger(massextinction);
-}
+{/*trigger(massextinction);*/}
 
 void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)
 {
@@ -119,4 +118,10 @@ void consoleScreen::outputTextCtrlTextChange(wxCommandEvent& event)
 	event.Skip(); //pass the event to wxWidgets
 	//Scroll all the way to the bottom EVERYTIME text changes.
 	richTextCtrl1->ShowPosition(richTextCtrl1->GetLastPosition());
+}
+
+void consoleScreen::handleThreadedEvent(wxThreadEvent& event)
+{
+	std::function<void()> threadedPayload = event.GetPayload<std::function<void()>>(); //gets and runs the payload
+	threadedPayload(); //runs the payload
 }

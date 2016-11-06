@@ -14,6 +14,7 @@
 #include <wx/textctrl.h>
 #include <wx/sizer.h>
 #include <wx/colour.h>
+#include <wx/thread.h>
 
 class consoleScreen : public wxFrame
 {
@@ -26,13 +27,14 @@ public:
 	{
 		ID_MainSizer, //not needed
 		ID_RichTextCtrl1,
-		ID_TextCtrl1
+		ID_TextCtrl1,
+		ID_Thread
 	};
 
 	//Member UI elements
 	wxFlexGridSizer 	*mainSizer;
 	wxRichTextCtrl 		*richTextCtrl1;
-	wxTextCtrl 			*textCtrl1;
+	wxTextCtrl 				*textCtrl1;
 
 protected:
 private:
@@ -43,6 +45,7 @@ private:
 	void CommandTextCtrlEnter(wxCommandEvent&);
 	void CommandTextCtrlKeyDown(wxKeyEvent&);
 	void outputTextCtrlTextChange(wxCommandEvent&);
+	void handleThreadedEvent(wxThreadEvent&);
 
 	//Variable
 	std::vector<std::string> lastLines = {};
