@@ -1,27 +1,42 @@
 #include "ProgressTracker.h"
 
-ProgressTracker::ProgressTracker() : r_object(0)
-{
-	//constructor
-}
+ProgressTracker::ProgressTracker() : consoleOutput(0)
+{} //default constructor
 
 ProgressTracker::ProgressTracker(wxRichTextCtrl* w)
 {
-	initialize(w); //initializes with given pointer
+	initializeConsole(w); //initializes with given pointer
 }
 
-void ProgressTracker::initialize(wxRichTextCtrl* init)
+void ProgressTracker::initializeConsole(wxRichTextCtrl* init)
 {
-	//Initialize!
-	r_object = init; //makes r_object initialized.
+	consoleOutput = init; //makes consoleOutput initialized.
+}
+
+void ProgressTracker::initializeGUI(){}
+
+bool ProgressTracker::hasGUIHandler()
+{
+	return false; //to be implemented
+}
+
+bool ProgressTracker::hasConsoleHandler()
+{
+	if (consoleOutput != 0)
+		{
+			return true; //valid console handler exist
+		}
+	return false; //valid console handler does not exist
 }
 
 void ProgressTracker::clear()
 {
-	r_object->Clear(); //clears the paragraph
+	//For now, send bare signal to clear object (should not be doing this)
+	consoleOutput->Clear(); //clears the paragraph
 }
 
 ProgressTracker::~ProgressTracker()
 {
-	//destory world
+	//Deallocate pointers
+	consoleOutput = 0; //points consoleOutput to 0
 }

@@ -66,14 +66,18 @@ public:
 	}
 
 	void initialize(wxRichTextCtrl*); //initializeeeee
+	bool hasGUIHandler(); //checks if GUI exists in current instance of progress tracker
+	bool hasConsoleHandler(); //checks if console exists in current instance of progress tracker
 	void clear(); //clears the text (not really to track progress, but I figured I might as well put it here)
 	//void initialize(ProgressGuage*); soon, but not now.
 
 	virtual ~ProgressTracker(); //virtual destructor
 protected:
 public:
-	//ToDo: add progress guage/bar here
-	wxRichTextCtrl *r_object = 0;
+	/*Console objects*/
+	wxRichTextCtrl *consoleOutput = 0;
+
+	/*GUI objects*/
 };
 
 #endif
