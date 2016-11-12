@@ -74,6 +74,9 @@ void CommandHandler::processCommand(std::string command, ProgressTracker *pt)
 	}
 	*pt << "Error processing command: EOF reached.";
 	*pt << "";
+
+	/*Command completed*/
+	pt->threadReportOperationsComplete(); //report to ProgressTracker command has completed
 }
 
 CommandHandler::~CommandHandler()
