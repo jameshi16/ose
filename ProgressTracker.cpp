@@ -58,7 +58,7 @@ void ProgressTracker::threadReportOperationsComplete()
 {
 	wxThreadEvent *input = new wxThreadEvent; //thread event
 
-	const std::function<void()> toMain = [r_ConsoleScreen]{
+	const std::function<void()> toMain = [&]{
 		r_ConsoleScreen->undoThread(); //undoes the trheads
 	};
 
