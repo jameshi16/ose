@@ -55,6 +55,7 @@ void CommandHandler::processCommand(std::string command, ProgressTracker *pt)
 		commandFunction cf = commandsAvailable[command]; //gets the command
 		cf(pt, a_arg); //plays the command
 		*pt << "";
+		pt->threadReportOperationsComplete(); //report to ProgressTracker command has completed
 		return;
 	}
 	if (commandsAvailable.count(command) == 0)
@@ -63,6 +64,7 @@ void CommandHandler::processCommand(std::string command, ProgressTracker *pt)
 		*pt << "Error processing command: Command not found";
 		*pt << "Try using lc";
 		*pt << "";
+		pt->threadReportOperationsComplete(); //report to ProgressTracker command has completed
 		return;
 	}
 	if (commandsAvailable.count(command) > 1)
@@ -70,10 +72,14 @@ void CommandHandler::processCommand(std::string command, ProgressTracker *pt)
 		//report to progress tracker
 		*pt << "Error processing command: Lazy programmer forgot to check code";
 		*pt << "";
+		pt->threadReportOperationsComplete(); //report to ProgressTracker command has completed
 		return;
 	}
 	*pt << "Error processing command: EOF reached.";
 	*pt << "";
+
+	/*Command completed*/
+	pt->threadReportOperationsComplete(); //report to ProgressTracker command has completed
 }
 
 CommandHandler::~CommandHandler()

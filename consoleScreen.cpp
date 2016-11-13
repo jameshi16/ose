@@ -54,13 +54,14 @@ consoleScreen::~consoleScreen()
 
 void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)
 {
-	//Makes use of commandHandler
-	ProgressTracker *pt = new ProgressTracker(richTextCtrl1);
-	CommandHandler(textCtrl1->GetValue().ToStdString(), pt); //sends command to commandHandler
+	activeProgressTracker = new ProgressTracker(richTextCtrl1, this); //assigns the ProgressTracker
+	activeCommandHandler = new CommandHandler();
+	workThread = new boost::thread(&CommandHandler::processCommand, activeCommandHandler, textCtrl1->GetValue().ToStdString(), activeProgressTracker); //prepares a thread
+
 	lastLines.push_back(textCtrl1->GetValue().ToStdString()); //pushes back the line
 	textCtrl1->Clear(); //clears the text box
+	textCtrl1->Disable(); //disables the text box
 	n_howManyTimesUpHasBeenPressed = 0; //sets the "last command" thingy back to 0
-	delete pt; //deletes the pointer
 }
 
 void consoleScreen::CommandTextCtrlKeyDown(wxKeyEvent& event)
@@ -124,4 +125,12 @@ void consoleScreen::handleThreadedEvent(wxThreadEvent& event)
 {
 	std::function<void()> threadedPayload = event.GetPayload<std::function<void()>>(); //gets and runs the payload
 	threadedPayload(); //runs the payload
+}
+
+void consoleScreen::undoThread()
+{
+	workThread->join(); //waits for the worker thread to join
+	delete workThread; delete activeCommandHandler; delete activeProgressTracker; //mass deletion
+	textCtrl1->Enable(); //enables the text control
+	textCtrl1->SetFocus(); //focuses on the text control
 }

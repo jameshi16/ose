@@ -16,6 +16,11 @@
 #include <wx/colour.h>
 #include <wx/thread.h>
 
+#include <boost/thread.hpp>
+
+class ProgressTracker; //forward
+class CommandHandler; //declaration
+
 class consoleScreen : public wxFrame
 {
 public:
@@ -36,6 +41,8 @@ public:
 	wxRichTextCtrl 		*richTextCtrl1;
 	wxTextCtrl 				*textCtrl1;
 
+	//Mass extinction
+	void undoThread();
 protected:
 private:
 	//necessary wxWidgets thing
@@ -48,8 +55,11 @@ private:
 	void handleThreadedEvent(wxThreadEvent&);
 
 	//Variable
-	std::vector<std::string> lastLines = {};
-	int n_howManyTimesUpHasBeenPressed = 0;
+	std::vector<std::string> lastLines 			= {};
+	int n_howManyTimesUpHasBeenPressed 			= 0;
+	boost::thread *workThread 							= 0;
+	ProgressTracker *activeProgressTracker 	= 0;
+	CommandHandler *activeCommandHandler		= 0;
 };
 
 #endif
