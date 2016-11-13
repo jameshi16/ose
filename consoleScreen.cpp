@@ -132,4 +132,5 @@ void consoleScreen::undoThread()
 	workThread->join(); //waits for the worker thread to join
 	delete workThread; delete activeCommandHandler; delete activeProgressTracker; //mass deletion
 	textCtrl1->Enable(); //enables the text control
+	textCtrl1->SetFocus(); //focuses on the text control
 }

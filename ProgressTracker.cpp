@@ -32,8 +32,13 @@ bool ProgressTracker::hasConsoleHandler()
 
 void ProgressTracker::clear()
 {
-	//For now, send bare signal to clear object (should not be doing this)
-	consoleOutput->Clear(); //clears the paragraph
+	wxThreadEvent *input = new wxThreadEvent; //thread event
+	const std::function<void()> toMain = [&]{
+		consoleOutput->Clear(); //clears the paragraph
+	};
+
+	input->SetPayload<std::function<void()>>(toMain); //sets payload
+	r_ConsoleScreen->GetEventHandler()->QueueEvent(input); //queues event
 }
 
 bool ProgressTracker::isWorkingThread()
@@ -56,18 +61,20 @@ void ProgressTracker::setThreadPointer(boost::thread* pointer)
 
 void ProgressTracker::threadReportOperationsComplete()
 {
-	wxThreadEvent *input = new wxThreadEvent; //thread event
+	if (hasConsoleHandler())
+	{
+		wxThreadEvent *input = new wxThreadEvent; //thread event
+		const std::function<void()> toMain = [&]{
+			r_ConsoleScreen->undoThread(); //undoes the trheads
+		};
 
-	const std::function<void()> toMain = [&]{
-		r_ConsoleScreen->undoThread(); //undoes the trheads
-	};
-
-	input->SetPayload<std::function<void()>>(toMain); //queues input event
-	r_ConsoleScreen->GetEventHandler()->QueueEvent(input); //queues input event
+		input->SetPayload<std::function<void()>>(toMain); //queues input event
+		r_ConsoleScreen->GetEventHandler()->QueueEvent(input); //queues input event
+	}
 }
 
 ProgressTracker::~ProgressTracker()
 {
 	//Deallocate pointers
-	consoleOutput = 0; //points consoleOutput to 0
+	consoleOutput = 0 ; r_ConsoleScreen = 0; threadIdentifier = 0;
 }
