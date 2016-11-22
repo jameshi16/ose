@@ -1,0 +1,62 @@
+/*headers copied and pasted from wxWidgets website*/
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#endif
+
+#ifndef OSEMAINUI
+#define OSEMAINUI
+
+///The UI.
+class OSEMainUI : public wxFrame
+{
+public:
+	OSEMainUI(wxWindow *const parent, const wxString& title, const wxPoint& pos, const wxSize& size);
+
+  /*IDs of the objects*/
+  enum:long
+  {
+    ID_LabelFrom,
+    ID_LabelTo,
+    ID_TexboxFrom,
+    ID_TextboxTo,
+    ID_ButtonFrom,
+    ID_ButtonTo,
+    ID_StatusLabel,
+    ID_MainGauge,
+    ID_StartButton,
+    ID_StopButton
+  };
+
+  /*Objects*/
+  wxStaticText *labelfrom;
+  wxStaticText *labelto;
+  wxStaticText *labelstatus;
+
+  wxButton *buttonfrom;
+  wxButton *buttonto;
+  wxButton *buttonstart;
+  wxButton *buttonstop;
+
+  wxTextCtrl *textboxfrom;
+  wxTextCtrl *textboxto;
+
+  wxGauge *gaugemain;
+
+  /*Sizers*/
+  wxFlexGridSizer *mainsizer;
+	wxFlexGridSizer *horizontal1; //the sizer containing from labels, buttons and textbox
+	wxFlexGridSizer *horizontal2; //the sizer containing to labels, buttons and textbox
+	wxFlexGridSizer *horizontal3; //the sizer containing the status label
+	wxFlexGridSizer *horizontal4; //the sizer containing the gauge
+	wxFlexGridSizer *horizontal5; //the sizer containing the buttons, start and cancel
+
+
+	~OSEMainUI();
+private:
+
+	//Necessary wxWidgets thing
+	wxDECLARE_EVENT_TABLE();
+};
+
+#endif //header guards

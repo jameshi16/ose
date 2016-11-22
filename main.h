@@ -4,26 +4,14 @@
 	#include <wx/wx.h>
 #endif
 
-#ifndef OSEMAINUI
-#define OSEMAINUI
+#ifndef MAINENTRY
+#define MAINENTRY
 
 /// MainApp, entry to wxWidgets
 class OSEMainApp : public wxApp
 {
 public:
 	virtual bool OnInit();
-};
-
-///The UI.
-class OSEMainUI : public wxFrame
-{
-public:
-	OSEMainUI(const wxString& title, const wxPoint& pos, const wxSize& size);
-	~OSEMainUI();
-private:
-
-	//Necessary wxWidgets thing
-	wxDECLARE_EVENT_TABLE();
 };
 
 //This is the entry point of the application, essentially.
