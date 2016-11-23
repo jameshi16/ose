@@ -8,11 +8,15 @@
 wxBEGIN_EVENT_TABLE(consoleScreen, wxFrame)
 	EVT_TEXT_ENTER(ID_TextCtrl1, consoleScreen::CommandTextCtrlEnter)
 	EVT_TEXT(ID_RichTextCtrl1, consoleScreen::outputTextCtrlTextChange)
+	EVT_CLOSE(consoleScreen::OnClose)
 wxEND_EVENT_TABLE()
 
 
-consoleScreen::consoleScreen() : wxFrame(NULL, wxID_ANY, "Console", wxDefaultPosition, wxDefaultSize)
+consoleScreen::consoleScreen(wxWindow *const parent) : wxFrame(parent, wxID_ANY, "Console", wxDefaultPosition, wxDefaultSize)
 {
+	if (parent != NULL)
+		parent->Hide();
+
 	Centre(); //centers the frame
 	SetMinClientSize(wxSize(800, 600)); //makes this the default size
 	SetSize(GetMinClientSize()); //and also makes this the current size
@@ -57,6 +61,14 @@ consoleScreen::~consoleScreen()
 		undoThread();
 	}
 	//mass extinction complete
+}
+
+void consoleScreen::OnClose(wxCloseEvent& event)
+{
+	if (GetParent() != NULL)
+		GetParent()->Show();
+
+	Destroy();
 }
 
 void consoleScreen::CommandTextCtrlEnter(wxCommandEvent& event)

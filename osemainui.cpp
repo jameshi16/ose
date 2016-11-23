@@ -1,6 +1,7 @@
 #include "osemainui.h"
 
 wxBEGIN_EVENT_TABLE(OSEMainUI, wxFrame)
+	EVT_CLOSE(OSEMainUI::OnClose)
 wxEND_EVENT_TABLE()
 
 OSEMainUI::OSEMainUI(wxWindow *const parent, const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(parent, wxID_ANY, title, pos, size)
@@ -57,6 +58,17 @@ OSEMainUI::OSEMainUI(wxWindow *const parent, const wxString& title, const wxPoin
 	/*Tweaks*/
 	buttonstop->Disable();
 
+	/*Sets the sizer*/
+	this->SetSizer(mainsizer); //sets the sizer
+
+}
+
+void OSEMainUI::OnClose(wxCloseEvent& event)
+{
+	if(GetParent() != NULL) //the only parent in this case would be consoleScreen
+		GetParent()->Show();
+
+	Destroy(); //releases memory
 }
 
 OSEMainUI::~OSEMainUI()

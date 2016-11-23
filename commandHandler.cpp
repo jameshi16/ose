@@ -21,7 +21,8 @@ namespace Commands
 		std::pair<std::string, commandFunction>("testOsuTag", testOsuTag), //test tag on osu directory
 		std::pair<std::string, commandFunction>("testIfFileMp3", testIfFileMP3), //tests if the file is mp3
 		std::pair<std::string, commandFunction>("clear", clear), //clears the console screen somehow
-		std::pair<std::string, commandFunction>("launchGUI", launchGUI) //launches the GUI
+		std::pair<std::string, commandFunction>("launchGUI", launchGUI), //launches the GUI
+		std::pair<std::string, commandFunction>("launchConsole", launchConsole) //launches the console
 	}; //pretty cool, right?
 }
 
@@ -508,5 +509,14 @@ void Commands::clear(ProgressTracker *pt, Arguments a)
 void Commands::launchGUI(ProgressTracker *pt, Arguments a)
 {
 	//handled locally in the console
+	*pt << "Error! launchGUI is to be launched only from the console!"; //if it somehow reaches here, error.
+	return;
+}
+
+//placeholder, launchConsole is to be implemented in the main thread, not at the command subthread
+void Commands::launchConsole(ProgressTracker *pt, Arguments a)
+{
+	//handled locally in the GUI
+	*pt << "Error! launchConsole is to be launched only from the GUI!"; //if it somehow reaches here, error.
 	return;
 }

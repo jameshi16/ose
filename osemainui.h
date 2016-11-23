@@ -51,9 +51,11 @@ public:
 	wxFlexGridSizer *horizontal4; //the sizer containing the gauge
 	wxFlexGridSizer *horizontal5; //the sizer containing the buttons, start and cancel
 
-
 	~OSEMainUI();
 private:
+
+	/*Event Handlers*/
+	void OnClose(wxCloseEvent&);
 
 	//Necessary wxWidgets thing
 	wxDECLARE_EVENT_TABLE();
