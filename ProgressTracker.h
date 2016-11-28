@@ -136,6 +136,8 @@ public:
 
 			const std::function<void()> toMain = [&pt, number]{
 				pt.progressbar->SetValue(number); //set the number
+				pt.progressbar->Refresh(); //refreshes the control
+				pt.progressbar->Update(); //updates the control
 			};
 
 			input->SetPayload<std::function<void()>>(toMain);

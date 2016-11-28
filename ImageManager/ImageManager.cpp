@@ -32,7 +32,7 @@ wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 		thePoint.y = (theImage.GetSize().GetHeight() /2) - 150; //the center - 600
 		//The point is now fully initialized.
 
-		theImage = theImage.GetSubImage(wxRect(thePoint, wxSize(600, 600))); //crops the image.
+		theImage = theImage.GetSubImage(wxRect(thePoint, wxSize(300, 300))); //crops the image.
 		return theImage;
 	}
 	//Everything else will be ignored because...

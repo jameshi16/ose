@@ -76,11 +76,22 @@ void ProgressTracker::threadReportOperationsComplete()
 	{
 		wxThreadEvent *input = new wxThreadEvent; //thread event
 		const std::function<void()> toMain = [&]{
-			r_ConsoleScreen->undoThread(); //undoes the trheads
+			r_ConsoleScreen->undoThread(); //undoes the thread
 		};
 
 		input->SetPayload<std::function<void()>>(toMain); //queues input event
 		r_ConsoleScreen->GetEventHandler()->QueueEvent(input); //queues input event
+	}
+
+	if (hasGUIHandler())
+	{
+		wxThreadEvent *input = new wxThreadEvent; //thread event
+		const std::function<void()> toMain = [&]{
+			r_mainui->UndoThread(); //undoes the thread
+		};
+
+		input->SetPayload<std::function<void()>>(toMain); //queues input event
+		r_mainui->GetEventHandler()->QueueEvent(input); //queues input event
 	}
 }
 

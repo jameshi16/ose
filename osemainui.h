@@ -56,6 +56,9 @@ public:
 	wxFlexGridSizer *horizontal4; //the sizer containing the gauge
 	wxFlexGridSizer *horizontal5; //the sizer containing the buttons, start and cancel
 
+	/*Extra functions (public)*/
+	void UndoThread(); //called by sub thread to free the thread
+
 	~OSEMainUI();
 private:
 
@@ -68,7 +71,8 @@ private:
 	void OnToClick(wxCommandEvent&);
 
 	/*Extra functions*/
-	void UndoThread(); //called by sub thread to free the thread
+	void EnableStuff(); //enables the controls that are disabled as a result of extraction
+	void DisableStuff(); //disables the control that will be disabled for extraction
 
 	/*Variables*/
 	boost::thread *commandThread							= 0;

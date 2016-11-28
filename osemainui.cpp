@@ -40,7 +40,7 @@ OSEMainUI::OSEMainUI(wxWindow *const parent, const wxString& title, const wxPoin
 	textboxfrom = new wxTextCtrl(this, ID_TexboxFrom, wxEmptyString); //creates a textbox
 	textboxto 	= new wxTextCtrl(this, ID_TextboxTo, wxEmptyString); //creates a textbox
 
-	gaugemain		= new wxGauge(this, ID_MainGauge, 100); //creates a gauge
+	gaugemain		= new wxGauge(this, ID_MainGauge, 100, wxDefaultPosition, wxDefaultSize, wxGA_SMOOTH | wxGA_PROGRESS); //creates a gauge
 
 	/*Sizering objects*/
 	mainsizer->Add(horizontal1, wxSizerFlags().Expand().Proportion(0));
@@ -86,9 +86,16 @@ OSEMainUI::OSEMainUI(wxWindow *const parent, const wxString& title, const wxPoin
 void OSEMainUI::OnStartClick(wxCommandEvent& event)
 {
 	namespace fs = boost::filesystem;
-	if (!fs::exists(fs::path(textboxfrom->GetLabel())) || fs::exists(fs::path(textboxto->GetLabel())))
+	if (textboxfrom->GetLabel() == "" || textboxto->GetLabel() == "" )
 		{
 			wxMessageDialog msgdlg(this, "Please fill in both fields!", "Empty fields", wxOK|wxCENTRE|wxICON_EXCLAMATION);
+			msgdlg.ShowModal(); //shows the dialog
+			return;
+		}
+
+	if (!fs::exists(fs::path(textboxfrom->GetLabel())) || !fs::exists(fs::path(textboxto->GetLabel())))
+		{
+			wxMessageDialog msgdlg(this, "Directories does not exist!", "Directory does not exist", wxOK|wxCENTRE|wxICON_EXCLAMATION);
 			msgdlg.ShowModal(); //shows the dialog
 			return;
 		}
@@ -96,9 +103,9 @@ void OSEMainUI::OnStartClick(wxCommandEvent& event)
 	currentProgressTracker 	= new ProgressTracker(labelstatus, gaugemain, this); //assigns a new progress tracker
 	currentCommandHandler 	= new CommandHandler(); //creates a new command handler
 
-	commandThread 					= new boost::thread(CommandHandler::processCommand, currentCommandHandler, std::string("testOsuTag -i \"") + textboxfrom->GetLabel().ToStdString() + std::string("\" -o \"") + textboxto->GetLabel().ToStdString() + std::string("\""), currentProgressTracker); //thread started
+	commandThread 					= new boost::thread(CommandHandler::processCommand, currentCommandHandler, std::string("OsuTag -i \"") + textboxfrom->GetLabel().ToStdString() + std::string("\" -o \"") + textboxto->GetLabel().ToStdString() + std::string("\""), currentProgressTracker); //thread started
 
-	this->Disable(); //disables the whole window
+	this->DisableStuff(); //disables the whole window
 }
 
 void OSEMainUI::OnStopClick(wxCommandEvent& event){/*to be implemented*/}
@@ -127,7 +134,7 @@ void OSEMainUI::OnToClick(wxCommandEvent& event)
 		}
 	}
 
-	textboxfrom->SetLabel(folderdlg.GetPath()); //gets the path and places it onto the textbox
+	textboxto->SetLabel(folderdlg.GetPath()); //gets the path and places it onto the textbox
 }
 
 void OSEMainUI::OnThread(wxThreadEvent& event)
@@ -150,8 +157,29 @@ void OSEMainUI::UndoThread()
 	{
 		commandThread->join(); //waits for the joining of thread
 		delete commandThread; delete currentProgressTracker; delete currentCommandHandler;
-		this->Enable();
+		this->EnableStuff();
+		labelstatus->SetLabel("Done.");
 	}
+}
+
+void OSEMainUI::EnableStuff()
+{
+	buttonfrom->Enable();
+	buttonto->Enable();
+	buttonstart->Enable();
+
+	textboxfrom->Enable();
+	textboxto->Enable();
+}
+
+void OSEMainUI::DisableStuff()
+{
+	buttonfrom->Disable();
+	buttonto->Disable();
+	buttonstart->Disable();
+
+	textboxfrom->Disable();
+	textboxto->Disable();
 }
 
 OSEMainUI::~OSEMainUI()
