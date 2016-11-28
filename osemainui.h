@@ -7,6 +7,11 @@
 #ifndef OSEMAINUI
 #define OSEMAINUI
 
+#include "boost/thread.hpp"
+
+class ProgressTracker; //forward declaration
+class CommandHandler; //forward declaration
+
 ///The UI.
 class OSEMainUI : public wxFrame
 {
@@ -55,7 +60,21 @@ public:
 private:
 
 	/*Event Handlers*/
+	void OnThread(wxThreadEvent&);
 	void OnClose(wxCloseEvent&);
+	void OnStartClick(wxCommandEvent&);
+	void OnStopClick(wxCommandEvent&);
+	void OnFromClick(wxCommandEvent&);
+	void OnToClick(wxCommandEvent&);
+
+	/*Extra functions*/
+	void UndoThread(); //called by sub thread to free the thread
+
+	/*Variables*/
+	boost::thread *commandThread							= 0;
+	ProgressTracker *currentProgressTracker		= 0;
+	CommandHandler *currentCommandHandler			= 0;
+
 
 	//Necessary wxWidgets thing
 	wxDECLARE_EVENT_TABLE();

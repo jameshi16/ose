@@ -1,7 +1,16 @@
 #include "osemainui.h"
+#include "ProgressTracker.h"
+#include "commandHandler.h"
+
+//Boost includes
+#include <boost/filesystem.hpp>
 
 wxBEGIN_EVENT_TABLE(OSEMainUI, wxFrame)
 	EVT_CLOSE(OSEMainUI::OnClose)
+	EVT_BUTTON(OSEMainUI::ID_StartButton, OSEMainUI::OnStartClick)
+	EVT_BUTTON(OSEMainUI::ID_StopButton, OSEMainUI::OnStopClick)
+	EVT_BUTTON(OSEMainUI::ID_ButtonTo, OSEMainUI::OnToClick)
+	EVT_BUTTON(OSEMainUI::ID_ButtonFrom, OSEMainUI::OnFromClick)
 wxEND_EVENT_TABLE()
 
 OSEMainUI::OSEMainUI(wxWindow *const parent, const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(parent, wxID_ANY, title, pos, size)
@@ -59,7 +68,7 @@ OSEMainUI::OSEMainUI(wxWindow *const parent, const wxString& title, const wxPoin
 	buttonstop->Disable();
 	SetMinClientSize(wxSize(300, 200)); //sets the minimum client size
 	SetSize(GetMinClientSize()); //sets the current client size to the minimum client size
-	SetBackgroundColour(*wxWHITE); //makes the background white
+	SetBackgroundColour(*wxLIGHT_GREY); //makes the background white
 
 	/*Sizer tweaks*/
 	mainsizer->AddGrowableCol(0);
@@ -69,6 +78,62 @@ OSEMainUI::OSEMainUI(wxWindow *const parent, const wxString& title, const wxPoin
 
 	/*Sets the sizer*/
 	this->SetSizer(mainsizer); //sets the sizer
+
+	/*Binds*/
+	this->Bind(wxEVT_THREAD, &OSEMainUI::OnThread, this); //declares thread event to use OnThread
+}
+
+void OSEMainUI::OnStartClick(wxCommandEvent& event)
+{
+	namespace fs = boost::filesystem;
+	if (!fs::exists(fs::path(textboxfrom->GetLabel())) || fs::exists(fs::path(textboxto->GetLabel())))
+		{
+			wxMessageDialog msgdlg(this, "Please fill in both fields!", "Empty fields", wxOK|wxCENTRE|wxICON_EXCLAMATION);
+			msgdlg.ShowModal(); //shows the dialog
+			return;
+		}
+
+	currentProgressTracker 	= new ProgressTracker(labelstatus, gaugemain, this); //assigns a new progress tracker
+	currentCommandHandler 	= new CommandHandler(); //creates a new command handler
+
+	commandThread 					= new boost::thread(CommandHandler::processCommand, currentCommandHandler, std::string("testOsuTag -i \"") + textboxfrom->GetLabel().ToStdString() + std::string("\" -o \"") + textboxto->GetLabel().ToStdString() + std::string("\""), currentProgressTracker); //thread started
+
+	this->Disable(); //disables the whole window
+}
+
+void OSEMainUI::OnStopClick(wxCommandEvent& event){/*to be implemented*/}
+
+void OSEMainUI::OnFromClick(wxCommandEvent& event)
+{
+  wxDirDialog folderdlg(this, "Find your osu! song folder", "C:/", wxDD_DIR_MUST_EXIST);
+	if (folderdlg.ShowModal() == wxID_CANCEL) //if the user cancels the operation, do nothing
+		return;
+
+	textboxfrom->SetLabel(folderdlg.GetPath()); //gets the path and places it onto the textbox
+}
+
+void OSEMainUI::OnToClick(wxCommandEvent& event)
+{
+	wxDirDialog folderdlg(this, "Save the song to where?", "C:/", wxDD_DEFAULT_STYLE);
+	if (folderdlg.ShowModal() == wxID_CANCEL) //if the user cancels the operation, do nothing
+		return;
+
+	if (!boost::filesystem::is_directory(boost::filesystem::path(folderdlg.GetPath()))) //if the path is not a directory
+	{
+		wxMessageDialog msgdlg(this, "There is no such directory. Create a new directory?", "Directory specified not found", wxYES_NO | wxICON_QUESTION);
+		if (msgdlg.ShowModal() == wxID_YES) //if the user presses yes
+		{
+			boost::filesystem::create_directory(boost::filesystem::path(folderdlg.GetPath())); //creates the path
+		}
+	}
+
+	textboxfrom->SetLabel(folderdlg.GetPath()); //gets the path and places it onto the textbox
+}
+
+void OSEMainUI::OnThread(wxThreadEvent& event)
+{
+	std::function<void()> toExecute = event.GetPayload<std::function<void()>>(); //gets the payload
+	toExecute(); //runs the event
 }
 
 void OSEMainUI::OnClose(wxCloseEvent& event)
@@ -77,6 +142,16 @@ void OSEMainUI::OnClose(wxCloseEvent& event)
 		GetParent()->Show();
 
 	Destroy(); //releases memory
+}
+
+void OSEMainUI::UndoThread()
+{
+	if (commandThread != 0)
+	{
+		commandThread->join(); //waits for the joining of thread
+		delete commandThread; delete currentProgressTracker; delete currentCommandHandler;
+		this->Enable();
+	}
 }
 
 OSEMainUI::~OSEMainUI()
