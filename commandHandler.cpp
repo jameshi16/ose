@@ -484,6 +484,19 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 	{
 		TagAgent ta;
 		ta.autoTag(obv->at(iii)); //tags the files
+		*pt << "";
+		*pt << "Tagged: ";
+		*pt << std::string("Beatmap Name: ") + obv->at(iii).BeatmapName;
+		*pt << std::string("Music Location: ") + obv->at(iii).MusicLocation;
+		*pt << std::string("Background Photo Location: ") + obv->at(iii).BackgroundPhoto;
+
+		if (iii + 1 >= obv->size())
+			break;
+
+		*pt << "Next to tag: ";
+		*pt << std::string("Beatmap Name: ") + obv->at(iii + 1).BeatmapName;
+		*pt << std::string("Music Location: ") + obv->at(iii + 1).MusicLocation;
+		*pt << std::string("Background Photo Location: ") + obv->at(iii + 1).BackgroundPhoto;
 	}
 
 	//Memory management

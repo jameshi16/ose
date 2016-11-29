@@ -15,7 +15,7 @@ wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 	wxImage theImage(imageLocation); //opens the image
 
 	/*Check for existing size*/
-	if (theImage.GetSize().GetWidth() >= 600 || theImage.GetSize().GetHeight() >= 600) //if it is more than 600
+	if (theImage.GetSize().GetWidth() >= 600 && theImage.GetSize().GetHeight() >= 600) //if it is more than 600
 	{
 		wxPoint thePoint; //the top left of the cropped image
 		thePoint.x = (theImage.GetSize().GetWidth() / 2) - 300; //the center - 600
@@ -25,7 +25,7 @@ wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 		theImage = theImage.GetSubImage(wxRect(thePoint, wxSize(600, 600))); //crops the image.
 		return theImage;
 	}
-	if (theImage.GetSize().GetWidth() >= 300 || theImage.GetSize().GetHeight() >= 300) //if it is more than 300, less than 600
+	if (theImage.GetSize().GetWidth() >= 300 && theImage.GetSize().GetHeight() >= 300) //if it is more than 300, less than 600
 	{
 		wxPoint thePoint; //the top left of the cropped image
 		thePoint.x = (theImage.GetSize().GetWidth() / 2) - 150; //the center - 600
