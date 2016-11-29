@@ -1,9 +1,14 @@
 #include "ImageManager.h"
 #include <wx/mstream.h>
+#include <wx/log.h>
 #include <tbytevector.h>
 
 wxImage ImageManipulation::makePerfectSize(std::string imageLocation)
 {
+
+	/*Error supression - to supress the iCCP profile errors (the only workaround)*/
+	wxLogNull noLogs;
+
 	/*Handlers*/
 	if (wxImage::FindHandler("PNG file") == NULL || wxImage::FindHandler("JPEG file") == NULL) //checks to ensure that handlers have not already been declared
 	{
