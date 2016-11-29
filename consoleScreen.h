@@ -24,7 +24,7 @@ class CommandHandler; //declaration
 class consoleScreen : public wxFrame
 {
 public:
-	consoleScreen();
+	consoleScreen(wxWindow* parent = NULL);
 	~consoleScreen();
 
 	//Member UI elements represented in IDs (also, anonymous enum, so it can be accessed anywhere)
@@ -53,6 +53,7 @@ private:
 	void CommandTextCtrlKeyDown(wxKeyEvent&);
 	void outputTextCtrlTextChange(wxCommandEvent&);
 	void handleThreadedEvent(wxThreadEvent&);
+	void OnClose(wxCloseEvent&);
 
 	//Variable
 	std::vector<std::string> lastLines 			= {};

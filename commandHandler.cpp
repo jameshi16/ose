@@ -20,7 +20,11 @@ namespace Commands
 		std::pair<std::string, commandFunction>("testTag", testTaggingOnFile), //test tagging on a single file
 		std::pair<std::string, commandFunction>("testOsuTag", testOsuTag), //test tag on osu directory
 		std::pair<std::string, commandFunction>("testIfFileMp3", testIfFileMP3), //tests if the file is mp3
-		std::pair<std::string, commandFunction>("clear", clear) //clears the console screen somehow
+		std::pair<std::string, commandFunction>("clear", clear), //clears the console screen somehow
+		std::pair<std::string, commandFunction>("launchGUI", launchGUI), //launches the GUI
+		std::pair<std::string, commandFunction>("launchConsole", launchConsole), //launches the console
+		std::pair<std::string, commandFunction>("OsuTag", OsuTag), //the tagging for the GUI
+		std::pair<std::string, commandFunction>("testProgressBar", testProgressBar) //test the progress bar
 	}; //pretty cool, right?
 }
 
@@ -499,6 +503,88 @@ void Commands::testOsuTag(ProgressTracker* pt, Arguments a)
 	delete obv;
 }
 
+//The Tagging function that is directly accessible though GUI
+void Commands::OsuTag(ProgressTracker* pt, Arguments a)
+{
+	/*Clean up block*/
+	a.removeEmptyArguments(); //removes all the empty arguments
+
+	if (a.size() != 2) //only do this function if there are exactly two arguments
+	{
+		*pt << "Command syntax: OsuTag -i <source> -o <destination>";
+		return;
+	}
+
+	using namespace fileOperations; //lazy
+	using namespace osuFileOperations; //also lazy
+
+	std::vector<osuBeatmap> *obv = new std::vector<osuBeatmap>; //initialized osuBeamap vector
+
+	std::function<void(std::string, ProgressTracker*)> f_osu = std::bind(readSingleFile, obv, std::placeholders::_1, std::placeholders::_2); //new function (using auto, very convinient thing!)
+
+	//Changes both arguments into working paths
+	int n_input 	= a.getArgumentPos("-i");
+	int n_output 	= a.getArgumentPos("-o");
+
+	if (n_input == NOTFOUND || n_output == NOTFOUND)
+	{
+		*pt << "Paths not found. Command syntax: testOsuTag -i <source> -o <destination>";
+		return;
+	}
+
+	if (n_input != NOTFOUND)
+	{
+		if ((a[n_input].rfind("\\") == std::string::npos && a[n_input].rfind("/") == std::string::npos) ||
+		(a[n_input].rfind("\\") != (a[n_input].length() - 1 /*Adjustment from 1 -> 0*/) && a[n_input].rfind("/") != (a[n_input].length() - 1 /*Adjustment from 1 -> 0*/)))
+		{
+			a[n_input].append("/"); //adds a path ender at the end
+			*pt << std::string("Path appended to: " + a.getArgumentString(n_input));
+		}
+	}
+	if (n_output != NOTFOUND)
+	{
+		if ((a[n_output].rfind("\\") == std::string::npos && a[n_output].rfind("/") == std::string::npos) ||
+		(a[n_output].rfind("\\") != (a[n_output].length() - 1 /*Adjustment from 1 -> 0*/) && a[n_output].rfind("/") != (a[n_output].length() - 1 /*Adjustment from 1 -> 0*/)))
+		{
+			a[n_output].append("/"); //adds a path ender at the end
+			*pt << std::string("Path appended to: " + a.getArgumentString(n_output));
+		}
+	}
+
+	//Read the files
+	readFiles(FindFiles(a.getArgumentString(n_input), ".osu", pt), f_osu, pt); //read files
+
+	//Removes duplicates
+	osuBeatmapFunctions::fixBeatmapDuplicates(*obv); //fixes the beatmap duplicates
+
+	//Copies the mp3 files to the working folder
+	for (unsigned int iii = 0; iii < obv->size(); iii++) //will modify osuBeatmap
+	{
+		copyFile(obv->at(iii).MusicLocation, a.getArgumentString(n_output) + justTheFile(obv->at(iii).MusicLocation)); //copies each and every file
+		obv->at(iii).MusicLocation = a.getArgumentString(n_output) + justTheFile(obv->at(iii).MusicLocation); //sets the osubeatmap again.
+
+		//GUI output
+		*pt << static_cast<int>((static_cast<double>(iii)/static_cast<double>(obv->size()*2)) * static_cast<double>(100));
+		*pt << std::string("Working on: ") + obv->at(iii).BeatmapName;
+	}
+
+	//Tag the audio
+	for (unsigned int iii = 0; iii < obv->size(); iii++) //will *not* modify osuBeatmap
+	{
+		TagAgent ta;
+		ta.autoTag(obv->at(iii)); //tags the files
+
+		//GUI output
+		*pt << static_cast<int>(((static_cast<double>(obv->size()) + static_cast<double>(iii)) / static_cast<double>(obv->size()*2)) * static_cast<double>(100)); //adds on to the previous progress value
+		*pt << std::string("Tagging file: ") + obv->at(iii).BeatmapName;
+	}
+
+	*pt << 100; //fully complete
+
+	//Memory management
+	delete obv;
+}
+
 //Tests if files are MP3 files.
 void Commands::testIfFileMP3(ProgressTracker* pt, Arguments a)
 {
@@ -515,3 +601,29 @@ void Commands::testIfFileMP3(ProgressTracker* pt, Arguments a)
 //Clears the textbox
 void Commands::clear(ProgressTracker *pt, Arguments a)
 { pt->clear(); /*clears the progress tracker*/ }
+
+//placeholder, launchGUI is to be implemented in the main thread, not at the command subthread
+void Commands::launchGUI(ProgressTracker *pt, Arguments a)
+{
+	//handled locally in the console
+	*pt << "Error! launchGUI is to be launched only from the console!"; //if it somehow reaches here, error.
+	return;
+}
+
+//placeholder, launchConsole is to be implemented in the main thread, not at the command subthread
+void Commands::launchConsole(ProgressTracker *pt, Arguments a)
+{
+	//handled locally in the GUI
+	*pt << "Error! launchConsole is to be launched only from the GUI!"; //if it somehow reaches here, error.
+	return;
+}
+
+void Commands::testProgressBar(ProgressTracker *pt, Arguments a)
+{
+	//Testing the progress bar
+	for (int iii = 0; iii < 100; iii++)
+	{
+		*pt << iii;
+	}
+	return;
+}

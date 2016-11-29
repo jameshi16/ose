@@ -5,7 +5,12 @@ ProgressTracker::ProgressTracker() : consoleOutput(0)
 
 ProgressTracker::ProgressTracker(wxRichTextCtrl* w, consoleScreen* c)
 {
-	initializeConsole(w, c); //initializes with given pointer
+	initializeConsole(w, c); //initializes with given pointers
+}
+
+ProgressTracker::ProgressTracker(wxStaticText* s, wxGauge* pb, OSEMainUI *omu)
+{
+	initializeGUI(s, pb, omu); //initializes with given pointers
 }
 
 void ProgressTracker::initializeConsole(wxRichTextCtrl* init, consoleScreen* console)
@@ -14,24 +19,34 @@ void ProgressTracker::initializeConsole(wxRichTextCtrl* init, consoleScreen* con
 	r_ConsoleScreen = console; //sets the console pointer
 }
 
-void ProgressTracker::initializeGUI(){}
+void ProgressTracker::initializeGUI(wxStaticText* s, wxGauge* pb, OSEMainUI *omu)
+{
+	statuslabel = s; //makes s the status label
+	progressbar = pb; //makes pb the progress bar
+	r_mainui 		= omu; //sets the gui pointer
+}
 
 bool ProgressTracker::hasGUIHandler()
 {
-	return false; //to be implemented
+	if (statuslabel != 0 && progressbar != 0 && r_mainui != 0)
+		return true; //valid handler exists
+
+	return false; //valid handler does not exist
 }
 
 bool ProgressTracker::hasConsoleHandler()
 {
 	if (consoleOutput != 0 && r_ConsoleScreen != 0)
-		{
 			return true; //valid console handler exist
-		}
+
 	return false; //valid console handler does not exist
 }
 
 void ProgressTracker::clear()
 {
+	if (hasConsoleHandler() != true)
+		return;
+
 	wxThreadEvent *input = new wxThreadEvent; //thread event
 	const std::function<void()> toMain = [&]{
 		consoleOutput->Clear(); //clears the paragraph
@@ -41,22 +56,18 @@ void ProgressTracker::clear()
 	r_ConsoleScreen->GetEventHandler()->QueueEvent(input); //queues event
 }
 
-bool ProgressTracker::isWorkingThread()
+void ProgressTracker::SetRange(int theNumber)
 {
-	if (threadIdentifier == 0)
-		return false;
-
-	return true;
-}
-
-void ProgressTracker::setThreadPointer(boost::thread* pointer)
-{
-	if (isWorkingThread())
+	if (hasGUIHandler() != true)
 		return;
 
-	ptLock.lock();
-	threadIdentifier = pointer; //sets the pointer
-	ptLock.unlock();
+	wxThreadEvent *input = new wxThreadEvent; //thread event
+	const std::function<void()> toMain = [&]{
+		progressbar->SetRange(theNumber); //sets the range
+	};
+
+	input->SetPayload<std::function<void()>>(toMain);
+	r_mainui->GetEventHandler()->QueueEvent(input); //sets event
 }
 
 void ProgressTracker::threadReportOperationsComplete()
@@ -65,16 +76,27 @@ void ProgressTracker::threadReportOperationsComplete()
 	{
 		wxThreadEvent *input = new wxThreadEvent; //thread event
 		const std::function<void()> toMain = [&]{
-			r_ConsoleScreen->undoThread(); //undoes the trheads
+			r_ConsoleScreen->undoThread(); //undoes the thread
 		};
 
 		input->SetPayload<std::function<void()>>(toMain); //queues input event
 		r_ConsoleScreen->GetEventHandler()->QueueEvent(input); //queues input event
+	}
+
+	if (hasGUIHandler())
+	{
+		wxThreadEvent *input = new wxThreadEvent; //thread event
+		const std::function<void()> toMain = [&]{
+			r_mainui->UndoThread(); //undoes the thread
+		};
+
+		input->SetPayload<std::function<void()>>(toMain); //queues input event
+		r_mainui->GetEventHandler()->QueueEvent(input); //queues input event
 	}
 }
 
 ProgressTracker::~ProgressTracker()
 {
 	//Deallocate pointers
-	consoleOutput = 0 ; r_ConsoleScreen = 0; threadIdentifier = 0;
+	consoleOutput = 0 ; r_ConsoleScreen = 0; statuslabel = 0; progressbar = 0; r_mainui = 0;
 }
